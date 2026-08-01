@@ -53,7 +53,7 @@ WAGO_UIMAP_URL = "https://wago.tools/db2/UiMap/csv?locale=enUS"
 WOWHEAD_NPC_URL = "https://nether.wowhead.com/tooltip/npc/{npc_id}"
 UA = "VendorMap-extract/1.0 (local seed bake; +https://github.com/)"
 INTERFACE_VERSION = "120007, 120100"
-ADDON_VERSION = "0.6.2"
+ADDON_VERSION = "0.6.3"
 
 # Primary continent mapID → pack key (nested continents aliased in CONTINENT_ALIASES).
 CONTINENT_PACKS: dict[int, str] = {

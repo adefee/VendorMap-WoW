@@ -2,7 +2,7 @@
 ## Title: VendorMap Data: Kul Tiras
 ## Notes: LoadOnDemand vendor coordinates for Kul Tiras. Requires VendorMap.
 ## Author: VendorMap
-## Version: 0.6.2
+## Version: 0.6.3
 ## LoadOnDemand: 1
 ## Dependencies: VendorMap
 ## X-Category: Map
