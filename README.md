@@ -85,10 +85,30 @@ addon compartment icon, or `/vendormap`).
 ## Data packs
 
 Continent vendor data ships as **LoadOnDemand** sibling addons named
-`VendorMap_Data_<Continent>` (Eastern Kingdoms, Kalimdor, Outland, Northrend, Pandaria,
-Draenor, Broken Isles, Zandalar, Kul Tiras, The Maelstrom, Shadowlands, Dragon Isles,
-Khaz Algar, and Other). Each pack loads only when you open a map on that continent, so
+`VendorMap_Data_<Continent>`. Each pack loads only when you open a map on that continent, so
 memory stays low. The core addon always ships the capital, hub, and decor seeds.
+
+### Like numbers?
+**2,846** vendors are catalogued in seed data today (and growing each update as I & other contributors explore and catalogue):
+
+
+| Source | Vendors |
+| ------ | ------: |
+| Capitals, hubs & decor (core) | 333 |
+| Eastern Kingdoms | 659 |
+| Kalimdor | 527 |
+| Outland | 188 |
+| Northrend | 200 |
+| Pandaria | 98 |
+| Draenor | 74 |
+| Broken Isles | 164 |
+| Zandalar | 62 |
+| Kul Tiras | 51 |
+| The Maelstrom | 14 |
+| Shadowlands | 98 |
+| Dragon Isles | 183 |
+| Khaz Algar | 159 |
+| Other | 36 |
 
 ## Contributing vendor data
 
