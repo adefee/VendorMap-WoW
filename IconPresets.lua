@@ -11,13 +11,16 @@ ns.ICON_PRESETS = {
     { id = "poison",        label = "Poisons",           icon = "Interface\\Minimap\\Tracking\\Poisons" },
     { id = "ammo",          label = "Ammunition",        icon = "Interface\\Minimap\\Tracking\\Ammunition" },
     { id = "stable",        label = "Stable Master",     icon = "Interface\\Minimap\\Tracking\\StableMaster" },
+    { id = "pets",          label = "Pets",              icon = "Interface\\Icons\\INV_Box_PetCarrier_01" },
     { id = "profession",    label = "Profession",        icon = "Interface\\Minimap\\Tracking\\Profession" },
     { id = "innkeeper",     label = "Innkeeper",         icon = "Interface\\Minimap\\Tracking\\Innkeeper" },
     { id = "barber",        label = "Barber",            icon = "Interface\\Minimap\\Tracking\\Barber" },
     { id = "transmog",      label = "Transmog",          icon = "Interface\\Minimap\\Tracking\\Transmogrifier", atlas = "poi-transmogrifier" },
     { id = "auctioneer",    label = "Auctioneer",        icon = "Interface\\Minimap\\Tracking\\Auctioneer" },
-    { id = "petsupplies",   label = "Pet Supplies",      icon = "Interface\\Icons\\INV_Box_PetCarrier_01" },
+    -- Legacy preset id kept so saved typeIconPreset.petsupplies still resolves.
+    { id = "petsupplies",   label = "Pets (legacy)",     icon = "Interface\\Icons\\INV_Box_PetCarrier_01" },
     { id = "banker",        label = "Banker",            icon = "Interface\\Minimap\\Tracking\\Banker" },
+    { id = "trainingdummy", label = "Training Dummy",    icon = "Interface\\Minimap\\Tracking\\BattleMaster" },
     { id = "vendor_gossip", label = "Vendor (gossip)",   icon = "Interface\\GossipFrame\\VendorGossipIcon" },
     { id = "bag",           label = "Bag (item icon)",  icon = "Interface\\Icons\\INV_Misc_Bag_10" },
     { id = "mount",         label = "Mount",             icon = "Interface\\Icons\\Ability_Mount_RidingHorse" },
@@ -318,7 +321,7 @@ function ns.SetVendorPinIcon(texture, info)
     ns.SetTypeIcon(texture, key, info.faction)
 end
 
--- Draw a General Goods display subtype icon (Auction House, Pet Supplies).
+-- Draw a General Goods display subtype icon (Auction House).
 -- Honors user preset/custom first, then a preferred atlas list, then the fallback texture.
 local function SetGeneralSubtypeIcon(texture, typeKey, atlases)
     local art = ns.ResolveTypeIconArt(typeKey)
@@ -346,12 +349,13 @@ function ns.SetTypeIcon(texture, typeKey, faction)
         texture:SetVertexColor(1, 1, 1)
     end
 
+    -- Legacy petsupplies display key → pets type art.
+    if typeKey == ns.PET_SUPPLIES_DISPLAY_KEY then
+        typeKey = "pets"
+    end
+
     if typeKey == ns.AUCTION_HOUSE_DISPLAY_KEY then
         SetGeneralSubtypeIcon(texture, typeKey, ns.AUCTION_HOUSE_ATLASES)
-        return
-    end
-    if typeKey == ns.PET_SUPPLIES_DISPLAY_KEY then
-        SetGeneralSubtypeIcon(texture, typeKey, nil)
         return
     end
     if ns.SPECIALTY_BY_KEY and ns.SPECIALTY_BY_KEY[typeKey] then

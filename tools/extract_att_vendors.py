@@ -270,9 +270,18 @@ TYPE_KEYWORDS: list[tuple[str, tuple[str, ...]]] = [
     ("food", ("food", "drink", "meat", "fruit", "butcher", "bread", "cheese", "fish vendor", "cook")),
     ("poison", ("poison",)),
     ("ammo", ("ammo", "ammunition", "arrow", "bullet")),
-    ("mounts", ("mount vendor", "mounts", "riding trainer", "wind rider", "gryphon master")),
+    ("mounts", ("mount vendor", "mount trainer", "mounts", "riding trainer", "wind rider", "gryphon master")),
+    ("pets", ("pet vendor", "pet supplies", "pet trainer", "battle pet", "breeder", "kennel", "pets")),
     ("stable", ("stable master", "stablemaster")),
     ("profession", ("profession", "trainer", "recipes", "plans", "schematic", "pattern", "design")),
+    # Class supply vendors only — require an explicit "<Class> Supplies" phrase so we don't
+    # mass-tag every ATT note that merely mentions a class name.
+    ("class", (
+        "warrior supplies", "paladin supplies", "hunter supplies", "rogue supplies",
+        "priest supplies", "death knight supplies", "shaman supplies", "mage supplies",
+        "warlock supplies", "monk supplies", "druid supplies", "demon hunter supplies",
+        "evoker supplies", "class supplies",
+    )),
     ("decor", ("decor", "housing", "furniture", "ornament")),
     ("innkeeper", ("innkeeper", "inn keeper")),
     ("barber", ("barber",)),
@@ -324,6 +333,22 @@ def infer_vendor_types(
             if w in text:
                 types[type_key] = True
                 break
+
+    # Whole-word "mount"/"mounts" in the description (not "mountain").
+    if re.search(r"\bmounts?\b", text):
+        types["mounts"] = True
+
+    # Whole-word pet/breeder/kennel signals.
+    if re.search(r"\b(?:pets?|breeders?|kennels?)\b", text):
+        types["pets"] = True
+
+    # Mount/riding trainers are mounts, not profession trainers.
+    if types.get("mounts") and re.search(r"\b(?:mount|riding)\s+trainer\b", text):
+        types.pop("profession", None)
+
+    # Pet / battle-pet trainers are pets, not profession trainers.
+    if types.get("pets") and re.search(r"\b(?:battle\s+)?pet\s+trainer\b", text):
+        types.pop("profession", None)
 
     if not types:
         types["general"] = True
@@ -605,7 +630,7 @@ def pack_for_map(map_id: int, uimap: dict[int, dict[str, str]]) -> str:
 
 
 TYPE_EMIT_ORDER = (
-    "repair", "reagents", "food", "poison", "ammo", "mounts", "stable",
+    "repair", "reagents", "food", "poison", "ammo", "mounts", "pets", "stable",
     "transmog", "decor", "profession", "faction", "innkeeper", "barber", "general",
 )
 
@@ -618,18 +643,37 @@ def format_types_lua(types: dict) -> str:
 
 
 def format_seed_line(v: dict, names: dict[int, str]) -> str:
+    """Emit one AddSeed line matching Export.lua / runtime NormalizeVendor fields.
+
+    Includes optional subtitle + specialtyKey (display model). Omits runtime-only
+    fields (learnedFrom, icon overrides, hidden).
+    """
     types_s = format_types_lua(v.get("types") or {})
     extras = ""
     if v.get("repFactionID"):
         extras += f", repFactionID={v['repFactionID']}"
     if v.get("minStanding"):
         extras += f", minStanding={v['minStanding']}"
-    note = lua_escape(v.get("note") or "ATT")
-    display = names.get(v["npcID"]) or f"Vendor {v['npcID']}"
+    subtitle = v.get("subtitle")
+    if isinstance(subtitle, str) and subtitle.strip():
+        extras += f', subtitle="{lua_escape(subtitle.strip())}"'
+    specialty = v.get("specialtyKey")
+    if isinstance(specialty, str) and specialty not in ("", "auto"):
+        extras += f", specialtyKey=\"{lua_escape(specialty)}\""
+    # ATT extractor always sets note; merge/export may omit it.
+    note = v.get("note")
+    note_part = f', note="{lua_escape(note)}"' if note else ""
+    npc_id = v.get("npcID")
+    display = (
+        v.get("name")
+        or (names.get(npc_id) if npc_id is not None else None)
+        or (f"Vendor {npc_id}" if npc_id is not None else "Unknown Vendor")
+    )
+    npc_part = f", npcID={npc_id}" if npc_id is not None else ""
     return (
-        f'A{{ name="{lua_escape(display)}", npcID={v["npcID"]}, mapID={v["mapID"]}, '
-        f'x={v["x"]:.4f}, y={v["y"]:.4f}, faction="{v["faction"]}", '
-        f'types={types_s}{extras}, note="{note}" }}\n'
+        f'A{{ name="{lua_escape(display)}"{npc_part}, mapID={v["mapID"]}, '
+        f'x={v["x"]:.4f}, y={v["y"]:.4f}, faction="{v.get("faction") or "Neutral"}", '
+        f"types={types_s}{extras}{note_part} }}\n"
     )
 
 

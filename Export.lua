@@ -3,8 +3,9 @@ local _, ns = ...
 -- Export learned + override vendors as AddSeed lines for offline merge into packs.
 
 local TYPE_ORDER = {
-    "repair", "reagents", "food", "poison", "ammo", "mounts", "stable",
-    "transmog", "decor", "profession", "faction", "innkeeper", "barber", "general",
+    "repair", "reagents", "food", "poison", "ammo", "mounts", "pets", "stable",
+    "transmog", "decor", "profession", "class", "faction", "innkeeper", "barber", "banker",
+    "trainingdummy", "general",
 }
 
 local exportFrame
@@ -40,12 +41,27 @@ local function FormatSeedLine(v)
     if v.minStanding then
         extras = extras .. ", minStanding=" .. tostring(v.minStanding)
     end
-    local note = LuaEscape(v.note or "")
+    -- Seed/export fields for display model (not runtime provenance).
     local subtitle = LuaEscape(v.subtitle or "")
+    if subtitle ~= "" then
+        extras = extras .. ', subtitle="' .. subtitle .. '"'
+    end
+    local specialty = v.specialtyKey
+    if type(specialty) == "string" and specialty ~= "" and specialty ~= "auto" then
+        extras = extras .. ', specialtyKey="' .. LuaEscape(specialty) .. '"'
+    end
+    -- Never export legacy "Learned from …" notes; that belongs in learnedFrom.
+    local note = v.note
+    if ns.ParseLegacyLearnNote and ns.ParseLegacyLearnNote(note) then
+        note = nil
+    end
+    local notePart = ""
+    if type(note) == "string" and note ~= "" then
+        notePart = ', note="' .. LuaEscape(note) .. '"'
+    end
     local npc = v.npcID and (", npcID=" .. tostring(v.npcID)) or ""
-    local subtitlePart = subtitle ~= "" and (", subtitle=\"" .. subtitle .. "\"") or ""
     return string.format(
-        'A{ name="%s"%s, mapID=%d, x=%.4f, y=%.4f, faction="%s", types=%s%s%s, note="%s" }',
+        'A{ name="%s"%s, mapID=%d, x=%.4f, y=%.4f, faction="%s", types=%s%s%s }',
         name,
         npc,
         v.mapID,
@@ -54,8 +70,7 @@ local function FormatSeedLine(v)
         v.faction or "Neutral",
         types,
         extras,
-        subtitlePart,
-        note
+        notePart
     )
 end
 
@@ -112,6 +127,7 @@ local function BuildExportText()
     local lines = {
         "-- VendorMap export (" .. date("%Y-%m-%d %H:%M") .. ")",
         "-- Paste into tools/merge_export_to_seeds.py or a Seed_*.lua file.",
+        "-- You can also share or submit this data with the addon author to improve data for everyone!",
         "local _, ns = ...",
         "local A = ns.AddSeed",
         "",

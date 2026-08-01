@@ -152,6 +152,25 @@ end
 
 --- Render a single vendor's primary tooltip block (title + details) into `tooltip`.
 -- Shared by pin hover and pick-menu entry tooltips so both look identical.
+local function VendorTypesText(info)
+    if ns.VendorTypeLabelList then
+        return ns.VendorTypeLabelList(info)
+    end
+    if ns.TypeLabelList then
+        return ns.TypeLabelList(info.types)
+    end
+    return ""
+end
+
+--- Secondary label beside the name in stack lists: subtitle when present, else categories.
+local function VendorListSecondary(info)
+    local subtitle = info and info.subtitle
+    if type(subtitle) == "string" and subtitle ~= "" then
+        return subtitle
+    end
+    return VendorTypesText(info)
+end
+
 local function RenderVendorPrimary(tooltip, info, opts)
     if not tooltip or not info then
         return
@@ -159,10 +178,17 @@ local function RenderVendorPrimary(tooltip, info, opts)
     opts = opts or {}
     local name = ns.Names and ns.Names:DisplayName(info) or info.name
     tooltip:SetText(name, 1, 1, 1)
-    if info.subtitle and info.subtitle ~= "" then
-        tooltip:AddLine(info.subtitle, 0.75, 0.75, 0.75, true)
+    local role = ns.GetVendorRoleLabel and ns.GetVendorRoleLabel(info)
+    local subtitle = info.subtitle
+    if type(subtitle) == "string" and subtitle ~= "" then
+        tooltip:AddLine(subtitle, 0.75, 0.75, 0.75, true)
+    elseif role then
+        tooltip:AddLine(role, 0.75, 0.75, 0.75, true)
     end
-    tooltip:AddLine(ns.TypeLabelList(info.types), 0.8, 0.8, 0.8, true)
+    local typesText = VendorTypesText(info)
+    if typesText ~= "" then
+        tooltip:AddLine(typesText, 0.8, 0.8, 0.8, true)
+    end
     tooltip:AddLine(info.faction or "Neutral", 0.6, 0.8, 1)
     local repText = ns.Names and ns.Names:RepRequirementText(info)
     if repText then
@@ -172,7 +198,9 @@ local function RenderVendorPrimary(tooltip, info, opts)
         tooltip:AddLine(info.note, 1, 0.82, 0, true)
     end
     if opts.showSource then
-        tooltip:AddLine(info.source == "learned" and "Learned" or "Seed data", 0.5, 0.5, 0.5)
+        local provenance = ns.FormatVendorProvenance and ns.FormatVendorProvenance(info)
+            or (info.source == "learned" and "Learned" or "Seed")
+        tooltip:AddLine(provenance, 0.5, 0.5, 0.5)
     end
 end
 ns.Overlap.RenderVendorPrimary = RenderVendorPrimary
@@ -192,12 +220,71 @@ function Overlap.WaypointVendor(info, printMsg)
     end
 end
 
+--- Copy pin info so picker/edit still have a stable row after result buffers recycle.
+local function SnapshotVendorInfo(info)
+    if not info then
+        return nil
+    end
+    local types = {}
+    if type(info.types) == "table" then
+        for k, v in pairs(info.types) do
+            if v then
+                types[k] = true
+            end
+        end
+    end
+    return {
+        id = info.id,
+        npcID = info.npcID,
+        name = info.name,
+        mapID = info.mapID,
+        x = info.x,
+        y = info.y,
+        originX = info.originX,
+        originY = info.originY,
+        faction = info.faction,
+        types = types,
+        note = info.note,
+        subtitle = info.subtitle,
+        specialtyKey = info.specialtyKey,
+        learnedFrom = info.learnedFrom,
+        repFactionID = info.repFactionID,
+        minStanding = info.minStanding,
+        source = info.source,
+        hidden = info.hidden,
+        iconPreset = info.iconPreset,
+        iconCustom = info.iconCustom,
+    }
+end
+
+-- Forward-declared: OpenVendorEditSoon must dismiss the catcher before the editor opens.
+local ClosePicker
+
+local function OpenVendorEditSoon(info)
+    local snap = SnapshotVendorInfo(info)
+    if not snap or not ns.OpenVendorEdit then
+        return
+    end
+    -- Must kill the fullscreen click-catcher before the editor appears; otherwise it
+    -- stays above the dialog and eats every click (including Cancel).
+    ClosePicker()
+    -- Defer so the opening mouse-up settles on the map/catcher stack.
+    if C_Timer and C_Timer.After then
+        C_Timer.After(0, function()
+            ns.OpenVendorEdit(snap)
+        end)
+    else
+        ns.OpenVendorEdit(snap)
+    end
+end
+
 -- Custom picker: MenuUtil context menus use a dark/low-contrast style that is hard
 -- to read on the world map. This panel matches filter-dropdown readability (solid
 -- backdrop, white labels) and shows per-row vendor tooltips on hover.
 local picker
 local pickerRows = {}
 local pickerOnPick
+local pickerEditMode = false -- true when opened via right-click (both clicks edit)
 local pickerTip
 local pickerTipLines = {}
 local pickerTipOwner
@@ -275,10 +362,13 @@ local function ShowPickerRowTooltip(row)
 
     local name = ns.Names and ns.Names:DisplayName(info) or info.name or "Unknown Vendor"
     add(name, 1, 1, 1, "GameFontNormal")
+    local role = ns.GetVendorRoleLabel and ns.GetVendorRoleLabel(info)
     if info.subtitle and info.subtitle ~= "" then
         add(info.subtitle, 0.75, 0.75, 0.75)
+    elseif role then
+        add(role, 0.75, 0.75, 0.75)
     end
-    add(ns.TypeLabelList and ns.TypeLabelList(info.types) or "", 0.8, 0.8, 0.8)
+    add(VendorTypesText(info), 0.8, 0.8, 0.8)
     add(info.faction or "Neutral", 0.6, 0.8, 1)
     local repText = ns.Names and ns.Names:RepRequirementText(info)
     if repText then
@@ -287,8 +377,18 @@ local function ShowPickerRowTooltip(row)
     if info.note and info.note ~= "" then
         add(info.note, 1, 0.82, 0)
     end
-    add(info.source == "learned" and "Learned" or "Seed data", 0.5, 0.5, 0.5)
-    add("Left-click: waypoint  ·  Right-click: edit", 0.55, 0.55, 0.55)
+    add(
+        (ns.FormatVendorProvenance and ns.FormatVendorProvenance(info))
+            or (info.source == "learned" and "Learned" or "Seed"),
+        0.5,
+        0.5,
+        0.5
+    )
+    if pickerEditMode then
+        add("Click: edit vendor", 0.55, 0.55, 0.55)
+    else
+        add("Left-click: waypoint  ·  Right-click: edit", 0.55, 0.55, 0.55)
+    end
 
     local y = -TIP_PAD
     local width = 160
@@ -361,16 +461,36 @@ local function UpdatePickerHoverTip()
     end
 end
 
-local function ClosePicker()
+local pickerOpen = false
+local closingPicker = false
+
+--- Reset picker + catcher to fully inert state.
+ClosePicker = function()
+    if closingPicker then
+        return
+    end
+    closingPicker = true
+    pickerOpen = false
     if picker then
         picker:SetScript("OnUpdate", nil)
-        picker:Hide()
+        if picker.EnableKeyboard then
+            picker:EnableKeyboard(false)
+        end
         if picker.catcher then
+            picker.catcher:EnableMouse(false)
             picker.catcher:Hide()
         end
+        picker:Hide()
     end
     pickerOnPick = nil
+    pickerEditMode = false
     HidePickerTip()
+    closingPicker = false
+end
+
+--- Public: dismiss stack picker + click-catcher (edit/override must call this).
+function Overlap.ClosePickMenu()
+    ClosePicker()
 end
 
 local function EnsurePicker()
@@ -381,7 +501,6 @@ local function EnsurePicker()
     picker:SetFrameStrata("FULLSCREEN_DIALOG")
     picker:SetFrameLevel(20000)
     picker:SetClampedToScreen(true)
-    -- Mouse stays on rows only; parent mouse-enable can swallow OnEnter in some builds.
     picker:EnableMouse(false)
     picker:SetBackdrop({
         bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
@@ -391,7 +510,6 @@ local function EnsurePicker()
         edgeSize = 14,
         insets = { left = 3, right = 3, top = 3, bottom = 3 },
     })
-    -- Near-opaque charcoal so white text stays readable over the map.
     picker:SetBackdropColor(0.08, 0.08, 0.12, 0.96)
     picker:SetBackdropBorderColor(0.55, 0.55, 0.65, 1)
 
@@ -400,13 +518,21 @@ local function EnsurePicker()
     picker.title:SetTextColor(1, 0.82, 0)
     picker.title:SetText("Vendors here")
 
+    -- OnHide: inline cleanup only — never call ClosePicker() from here (re-entrant
+    -- picker:Hide() inside OnHide corrupts the frame on some WoW builds).
     picker:SetScript("OnHide", function(self)
+        pickerOpen = false
         self:SetScript("OnUpdate", nil)
-        pickerOnPick = nil
-        HidePickerTip()
+        if self.EnableKeyboard then
+            self:EnableKeyboard(false)
+        end
         if self.catcher then
+            self.catcher:EnableMouse(false)
             self.catcher:Hide()
         end
+        pickerOnPick = nil
+        pickerEditMode = false
+        HidePickerTip()
     end)
     picker:SetScript("OnKeyDown", function(self, key)
         if key == "ESCAPE" then
@@ -417,13 +543,15 @@ local function EnsurePicker()
         picker:SetPropagateKeyboardInput(false)
     end
 
-    -- Click-away catcher
+    -- Click-away catcher: lives behind picker rows but above everything else.
+    -- Always anchored full-screen; visibility + EnableMouse toggles activation.
     picker.catcher = CreateFrame("Button", nil, UIParent)
     picker.catcher:SetFrameStrata("FULLSCREEN_DIALOG")
     picker.catcher:SetFrameLevel(19999)
     picker.catcher:SetAllPoints(UIParent)
-    picker.catcher:EnableMouse(true)
+    picker.catcher:EnableMouse(false)
     picker.catcher:Hide()
+    picker.catcher:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     picker.catcher:SetScript("OnClick", ClosePicker)
     picker.catcher:SetScript("OnMouseWheel", ClosePicker)
 
@@ -470,19 +598,24 @@ local function AcquirePickerRow(i)
         if not info then
             return
         end
-        local cb = pickerOnPick
-        ClosePicker()
-        if button == "RightButton" then
-            if ns.OpenVendorEdit then
-                ns.OpenVendorEdit(info)
-            end
+        local snap = SnapshotVendorInfo(info)
+        local editMode = pickerEditMode
+        local onPick = pickerOnPick
+
+        -- Right-click always edits. Edit-mode list: either click edits.
+        -- OpenVendorEditSoon closes the picker/catcher itself.
+        if button == "RightButton" or editMode then
+            OpenVendorEditSoon(snap)
             return
         end
-        -- Left-click: waypoint (same path as a lone pin).
-        if cb then
-            cb(info)
+
+        ClosePicker()
+
+        -- Waypoint-mode list: left-click runs the open-time callback (set waypoint).
+        if onPick then
+            onPick(snap)
         else
-            Overlap.WaypointVendor(info, true)
+            Overlap.WaypointVendor(snap, true)
         end
     end)
     pickerRows[i] = row
@@ -490,7 +623,8 @@ local function AcquirePickerRow(i)
 end
 
 --- Picker listing every vendor in a stack; choosing one runs onPick(info).
-function Overlap.OpenPickMenu(owner, vendors, onPick)
+-- opts: { editMode = bool } — when true, left-click also edits (opened via right-click).
+function Overlap.OpenPickMenu(owner, vendors, onPick, opts)
     if type(vendors) ~= "table" or #vendors == 0 then
         return
     end
@@ -501,8 +635,12 @@ function Overlap.OpenPickMenu(owner, vendors, onPick)
         return
     end
 
+    -- Tear down any previous picker so we start clean.
+    ClosePicker()
+
     local f = EnsurePicker()
     pickerOnPick = onPick
+    pickerEditMode = opts and opts.editMode and true or false
 
     local width = 260
     local y = -(PAD + 18)
@@ -513,12 +651,14 @@ function Overlap.OpenPickMenu(owner, vendors, onPick)
         row:SetPoint("TOPLEFT", PAD, y)
         row:SetPoint("TOPRIGHT", -PAD, y)
         row:SetFrameLevel(f:GetFrameLevel() + 2)
+        row:EnableMouse(true)
+        row:RegisterForClicks("LeftButtonUp", "RightButtonUp")
         row:Show()
 
         local name = ns.Names and ns.Names:DisplayName(info) or info.name or "Unknown Vendor"
-        local types = ns.TypeLabelList and ns.TypeLabelList(info.types) or ""
-        if types ~= "" then
-            row.text:SetText(name .. "  |cff999999" .. types .. "|r")
+        local secondary = VendorListSecondary(info)
+        if secondary ~= "" then
+            row.text:SetText(name .. "  |cff999999" .. secondary .. "|r")
         else
             row.text:SetText(name)
         end
@@ -554,9 +694,22 @@ function Overlap.OpenPickMenu(owner, vendors, onPick)
     f:ClearAllPoints()
     f:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", x / scale + 12, cy / scale + 8)
 
-    f.catcher:Show()
+    pickerOpen = true
     f:Show()
-    f:Raise()
+
+    -- Arm click-away catcher one frame later so the opening mouse-up doesn't dismiss.
+    local catcher = f.catcher
+    catcher:EnableMouse(false)
+    catcher:Show()
+    C_Timer.After(0, function()
+        if not pickerOpen or not picker or not picker:IsShown() then
+            return
+        end
+        if picker.catcher then
+            picker.catcher:EnableMouse(true)
+        end
+    end)
+
     -- Poll hover: OnEnter is unreliable over the world map / click-catcher stack.
     f:SetScript("OnUpdate", UpdatePickerHoverTip)
     if f.EnableKeyboard then
@@ -567,10 +720,10 @@ end
 -- Kept for callers that still expect icon markup helpers.
 local function VendorMenuLabel(info)
     local name = ns.Names and ns.Names:DisplayName(info) or info.name or "Unknown Vendor"
-    local types = ns.TypeLabelList and ns.TypeLabelList(info.types) or ""
+    local secondary = VendorListSecondary(info)
     local label = VendorIconMarkup(info) .. name
-    if types and types ~= "" then
-        label = label .. (" (%s)"):format(types)
+    if secondary and secondary ~= "" then
+        label = label .. (" (%s)"):format(secondary)
     end
     return label
 end
@@ -586,9 +739,9 @@ local function AppendNearby(tooltip, neighbors)
         end
         local ninfo = entry.info
         local nname = ns.Names and ns.Names:DisplayName(ninfo) or ninfo.name
-        local types = ns.TypeLabelList and ns.TypeLabelList(ninfo.types) or ""
-        if types and types ~= "" then
-            tooltip:AddLine(("  %s |cff888888— %s|r"):format(nname, types), 0.9, 0.9, 0.9, true)
+        local secondary = VendorListSecondary(ninfo)
+        if secondary and secondary ~= "" then
+            tooltip:AddLine(("  %s |cff888888— %s|r"):format(nname, secondary), 0.9, 0.9, 0.9, true)
         else
             tooltip:AddLine(("  %s"):format(nname), 0.9, 0.9, 0.9, true)
         end
@@ -623,7 +776,7 @@ function Overlap.OnPinEnter(pin, opts)
     if neighbors then
         AppendNearby(GameTooltip, neighbors)
         GameTooltip:AddLine(" ")
-        GameTooltip:AddLine("|cff00ff00Left-click|r open list · |cffffd100Right-click|r edit", 1, 1, 1)
+        GameTooltip:AddLine("|cff00ff00Left-click|r list (waypoint) · |cffffd100Right-click|r list (edit)", 1, 1, 1)
         HighlightNeighbors(neighbors)
     else
         GameTooltip:AddLine(" ")
@@ -649,26 +802,35 @@ function Overlap.HandlePinClick(pin, button, opts)
     end
     opts = opts or {}
 
-    if button == "RightButton" then
-        if ns.OpenVendorEdit then
-            ns.OpenVendorEdit(info)
-        end
-        return
-    end
-
     local neighbors
     if opts.index and Overlap.Enabled() then
         neighbors = Overlap.Neighbors(opts.index, pin)
     end
 
-    if neighbors and #neighbors > 0 then
-        local vendors = { info }
-        for _, entry in ipairs(neighbors) do
-            vendors[#vendors + 1] = entry.info
+    if button == "RightButton" then
+        -- Stacked pins: open the list so edit can target a specific neighbor.
+        if neighbors and #neighbors > 0 then
+            local vendors = { SnapshotVendorInfo(info) }
+            for _, entry in ipairs(neighbors) do
+                vendors[#vendors + 1] = SnapshotVendorInfo(entry.info)
+            end
+            -- editMode: row clicks edit (onPick unused; kept nil on purpose).
+            Overlap.OpenPickMenu(pin, vendors, nil, { editMode = true })
+            return
         end
+        OpenVendorEditSoon(SnapshotVendorInfo(info) or info)
+        return
+    end
+
+    if neighbors and #neighbors > 0 then
+        local vendors = { SnapshotVendorInfo(info) }
+        for _, entry in ipairs(neighbors) do
+            vendors[#vendors + 1] = SnapshotVendorInfo(entry.info)
+        end
+        local printWaypoint = opts.printWaypoint
         Overlap.OpenPickMenu(pin, vendors, function(chosen)
-            Overlap.WaypointVendor(chosen, opts.printWaypoint)
-        end)
+            Overlap.WaypointVendor(chosen, printWaypoint)
+        end, { editMode = false })
         return
     end
 

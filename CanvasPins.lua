@@ -18,6 +18,12 @@ local resultBuffer = {}
 local MAX_POOL = 400
 -- Last trusted canvas scale (zoom/map changes). Reject spikes from open menus/dialogs.
 local lastGoodScale
+-- Cached map-type base size for the active pin set (used by the zoom-only rescale path).
+local activeBaseSize = 18
+
+-- Extra screen-space shrink once zoomed past 1×. 0 = constant on-screen size;
+-- 0.12 ≈ 11% smaller at 2× zoom so the point reads a bit more precisely.
+local ZOOM_SHRINK = 0.12
 
 local function HideFrom(startIndex)
     for i = startIndex, #pins do
@@ -108,6 +114,81 @@ local function Acquire(i)
     return pin
 end
 
+--- Read ScrollContainer canvas scale, optionally rejecting dialog-induced spikes.
+local function ReadCanvasScale(trustScale)
+    local scale = 1
+    local sc = WorldMapFrame and WorldMapFrame.ScrollContainer
+    if sc and sc.GetCanvasScale then
+        local ok, canvasScale = pcall(sc.GetCanvasScale, sc)
+        if ok and type(canvasScale) == "number" and canvasScale > 0 then
+            scale = canvasScale
+        end
+    else
+        local canvas = GetCanvas()
+        if canvas and canvas.GetScale then
+            local s = canvas:GetScale()
+            if type(s) == "number" and s > 0 then
+                scale = s
+            end
+        end
+    end
+    -- Wide band: maps zoom well past 2.5×; clamping there made deep-zoom pins bloat.
+    if scale < 0.25 then
+        scale = 0.25
+    elseif scale > 8 then
+        scale = 8
+    end
+
+    if trustScale or not lastGoodScale then
+        lastGoodScale = scale
+        return scale
+    end
+    local lo = lastGoodScale / 1.25
+    local hi = lastGoodScale * 1.25
+    if scale < lo or scale > hi then
+        return lastGoodScale
+    end
+    lastGoodScale = scale
+    return scale
+end
+
+--- Canvas-local pixel size: undo parenting scale, then shrink a bit as zoom rises.
+local function ComputePinSize(base, typeKey, canvasScale)
+    local scale = canvasScale > 0 and canvasScale or 1
+    local shrink = 1 + ZOOM_SHRINK * math.max(0, scale - 1)
+    return (base * ns.GetTypeIconScale(typeKey)) / (scale * shrink)
+end
+
+local function DisplayKeyForInfo(info)
+    return ns.GetPinDisplayType and ns.GetPinDisplayType(info) or ns.PrimaryVendorType(info.types)
+end
+
+--- Cheap zoom path: resize existing pins without rebuilding the vendor list.
+function CanvasPins:RescaleActive()
+    if activeCount <= 0 then
+        return
+    end
+    if not WorldMapFrame or not WorldMapFrame:IsShown() then
+        return
+    end
+    local scale = ReadCanvasScale(true)
+    local base = activeBaseSize
+    for i = 1, activeCount do
+        local pin = pins[i]
+        local info = pin and pin.info
+        if info then
+            local key = pin._displayKey or DisplayKeyForInfo(info)
+            local size = ComputePinSize(base, key, scale)
+            pin:SetSize(size, size)
+            -- Non-square atlases (e.g. transmog poi-transmogrifier) use absolute
+            -- SetSize in LayoutPinIcon; must re-run after the pin frame resizes.
+            if pin.icon and ns.LayoutPinIcon then
+                ns.LayoutPinIcon(pin.icon)
+            end
+        end
+    end
+end
+
 --- opts.trustScale: accept the current GetCanvasScale reading (zoom / map change).
 -- Without it, sudden spikes (filter menu, dialogs) keep lastGoodScale instead.
 function CanvasPins:Update(opts)
@@ -144,37 +225,7 @@ function CanvasPins:Update(opts)
 
     -- Prefer ScrollContainer canvas scale — Child:GetScale() can spike while other
     -- dialogs (vendor edit) are open, which made pins shrink until the next reload.
-    local scale = 1
-    local sc = WorldMapFrame and WorldMapFrame.ScrollContainer
-    if sc and sc.GetCanvasScale then
-        local ok, canvasScale = pcall(sc.GetCanvasScale, sc)
-        if ok and type(canvasScale) == "number" and canvasScale > 0 then
-            scale = canvasScale
-        end
-    elseif canvas.GetScale then
-        local s = canvas:GetScale()
-        if type(s) == "number" and s > 0 then
-            scale = s
-        end
-    end
-    -- Keep compensation in a sane band so a bad scale reading can't crush pins.
-    if scale < 0.5 then
-        scale = 0.5
-    elseif scale > 2.5 then
-        scale = 2.5
-    end
-
-    if opts.trustScale or not lastGoodScale then
-        lastGoodScale = scale
-    else
-        local lo = lastGoodScale / 1.25
-        local hi = lastGoodScale * 1.25
-        if scale < lo or scale > hi then
-            scale = lastGoodScale
-        else
-            lastGoodScale = scale
-        end
-    end
+    local scale = ReadCanvasScale(opts.trustScale)
 
     local width, height = canvas:GetWidth(), canvas:GetHeight()
     if ns.EnsureDataForMap then
@@ -187,6 +238,7 @@ function CanvasPins:Update(opts)
     local mapInfo = C_Map.GetMapInfo(mapID)
     local mapType = mapInfo and mapInfo.mapType or 3
     local base = ns.GetPinBaseSize(mapType, false)
+    activeBaseSize = base
 
     local count = 0
     for i, info in ipairs(list) do
@@ -199,8 +251,9 @@ function CanvasPins:Update(opts)
         pin:SetFrameLevel(10000)
         pin.info = info
 
-        local key = ns.GetPinDisplayType and ns.GetPinDisplayType(info) or ns.PrimaryVendorType(info.types)
-        local size = (base * ns.GetTypeIconScale(key)) / scale
+        local key = DisplayKeyForInfo(info)
+        pin._displayKey = key
+        local size = ComputePinSize(base, key, scale)
         pin:SetSize(size, size)
 
         if ns.SetVendorPinIcon then
@@ -285,9 +338,17 @@ local function HookWorldMap()
     WorldMapFrame:HookScript("OnShow", function()
         ScheduleUpdate(true)
     end)
-    if WorldMapFrame.ScrollContainer then
+    -- Fires throughout a zoom animation — resize only (no DB rebuild), same as
+    -- Blizzard MapCanvasPinMixin:OnCanvasScaleChanged → ApplyCurrentScale.
+    if WorldMapFrame.OnCanvasScaleChanged then
+        hooksecurefunc(WorldMapFrame, "OnCanvasScaleChanged", function()
+            CanvasPins:RescaleActive()
+        end)
+    elseif WorldMapFrame.ScrollContainer then
         hooksecurefunc(WorldMapFrame.ScrollContainer, "SetZoomTarget", function()
-            ScheduleUpdate(true)
+            C_Timer.After(0, function()
+                CanvasPins:RescaleActive()
+            end)
         end)
     end
     if WorldMapFrame.OnMapChanged then

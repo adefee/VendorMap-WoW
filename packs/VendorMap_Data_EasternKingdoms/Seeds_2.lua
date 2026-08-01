@@ -25,7 +25,7 @@ A{ name="Rathis Tomber", npcID=16224, mapID=95, x=0.4720, y=0.2860, faction="Hor
 A{ name="Master Chef Mouldier", npcID=16253, mapID=95, x=0.4840, y=0.3100, faction="Horde", types={general=true}, note="ATT" }
 A{ name="Eralan", npcID=16268, mapID=95, x=0.4700, y=0.3420, faction="Horde", types={transmog=true}, note="ATT" }
 A{ name="Provisioner Vredigar", npcID=16528, mapID=95, x=0.4760, y=0.3220, faction="Horde", types={transmog=true, faction=true}, repFactionID=922, minStanding=3000, note="ATT" }
-A{ name="Budd", npcID=23559, mapID=95, x=0.7100, y=0.6720, faction="Neutral", types={transmog=true}, note="ATT — To obtain this, talk to Budd Nedreck after completing 'Promises, Promises...', click the dialog \"You gave the crew disgu" }
+A{ name="Budd", npcID=23559, mapID=95, x=0.7100, y=0.6720, faction="Neutral", types={transmog=true}, note="ATT — To obtain this, talk to Budd Nedreck after completing 'Promises, Promises...', click the dialog \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"You gave the crew disgu" }
 A{ name="Vinemaster Suntouched", npcID=16442, mapID=110, x=0.7950, y=0.5850, faction="Horde", types={general=true}, note="ATT" }
 A{ name="Kredis", npcID=16610, mapID=110, x=0.7860, y=0.8460, faction="Horde", types={general=true}, note="ATT" }
 A{ name="Celana", npcID=16619, mapID=110, x=0.8600, y=0.3660, faction="Horde", types={transmog=true}, note="ATT" }
@@ -129,37 +129,58 @@ A{ name="Faarden the Builder", npcID=255213, mapID=2352, x=0.5200, y=0.3840, fac
 A{ name="Balen Starfinder", npcID=255216, mapID=2352, x=0.5220, y=0.3780, faction="Neutral", types={general=true}, note="ATT" }
 A{ name="Argan Hammerfist", npcID=255218, mapID=2352, x=0.5220, y=0.3780, faction="Neutral", types={general=true}, note="ATT" }
 A{ name="Trevor Grenner", npcID=255221, mapID=2352, x=0.5350, y=0.4090, faction="Neutral", types={general=true}, note="ATT" }
-A{ name="\"High Tides\" Ren", npcID=255222, mapID=2352, x=0.6240, y=0.8010, faction="Neutral", types={general=true}, note="ATT" }
-A{ name="\"Len\" Splinthoof", npcID=255228, mapID=2352, x=0.6160, y=0.7900, faction="Neutral", types={general=true}, note="ATT" }
-A{ name="\"Yen\" Malone", npcID=255230, mapID=2352, x=0.6220, y=0.8030, faction="Neutral", types={general=true}, note="ATT" }
+A{ name="\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"High Tides\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" Ren", npcID=255222, mapID=2352, x=0.6240, y=0.8010, faction="Neutral", types={general=true}, note="ATT" }
+A{ name="\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"Len\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" Splinthoof", npcID=255228, mapID=2352, x=0.6160, y=0.7900, faction="Neutral", types={general=true}, note="ATT" }
+A{ name="\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"Yen\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" Malone", npcID=255230, mapID=2352, x=0.6220, y=0.8030, faction="Neutral", types={general=true}, note="ATT" }
 A{ name="Lestia Goldenstrike", npcID=255519, mapID=2352, x=0.5190, y=0.3870, faction="Neutral", types={general=true}, note="ATT" }
 A{ name="Lorisin", npcID=255654, mapID=2352, x=0.4160, y=0.6180, faction="Neutral", types={general=true}, note="ATT" }
 A{ name="Klasa", npcID=256750, mapID=2352, x=0.5830, y=0.6170, faction="Neutral", types={general=true}, note="ATT" }
-A{ name="Lindormi", npcID=197711, mapID=2393, x=0.4210, y=0.5880, faction="Neutral", types={general=true}, note="ATT" }
+A{ name="Lindormi", npcID=197711, mapID=2393, x=0.4210, y=0.5859, faction="Alliance", types={mounts=true, profession=true} }
+A{ name="Ceera", npcID=239664, mapID=2393, x=0.5082, y=0.6524, faction="Horde", types={general=true}, subtitle="Banker" }
+A{ name="Hatheon", npcID=239665, mapID=2393, x=0.5097, y=0.6547, faction="Horde", types={general=true}, subtitle="Banker" }
+A{ name="Elana", npcID=239666, mapID=2393, x=0.5064, y=0.6494, faction="Horde", types={general=true}, subtitle="Banker" }
 A{ name="Vaultkeeper Elysa", npcID=239670, mapID=2393, x=0.5040, y=0.6490, faction="Neutral", types={food=true}, note="ATT" }
-A{ name="Vaskarn", npcID=239676, mapID=2393, x=0.4860, y=0.6200, faction="Neutral", types={general=true}, note="ATT —  |cffff0000 -- DOWNGRADE --|r  Cost: LFR Crest Receive: Adventurer Crest" }
+A{ name="Vaskarn", npcID=239676, mapID=2393, x=0.4856, y=0.6193, faction="Alliance", types={profession=true} }
 A{ name="Naleidea Rivergleam", npcID=242398, mapID=2393, x=0.5280, y=0.7790, faction="Neutral", types={food=true}, note="ATT" }
 A{ name="Telemancer Astrandis", npcID=242399, mapID=2393, x=0.5250, y=0.7890, faction="Neutral", types={general=true}, note="ATT" }
-A{ name="Zalle", npcID=243160, mapID=2393, x=0.4490, y=0.5590, faction="Neutral", types={general=true}, note="ATT" }
+A{ name="Zalle", npcID=243160, mapID=2393, x=0.4498, y=0.5590, faction="Alliance", types={profession=true} }
 A{ name="Captain Dawnrunner", npcID=243221, mapID=2393, x=0.3400, y=0.8100, faction="Neutral", types={food=true}, note="ATT" }
 A{ name="Mirvedon", npcID=243225, mapID=2393, x=0.3400, y=0.8120, faction="Neutral", types={food=true}, note="ATT" }
 A{ name="Madam Goya", npcID=243247, mapID=2393, x=0.5184, y=0.4853, faction="Neutral", types={general=true}, note="ATT" }
+A{ name="Lyrendal", npcID=243286, mapID=2393, x=0.4494, y=0.5552, faction="Alliance", types={profession=true} }
+A{ name="Amin", npcID=243345, mapID=2393, x=0.4820, y=0.5511, faction="Horde", types={profession=true}, subtitle="Jewelcrafting Trainer", specialtyKey="trainer" }
+A{ name="Gelanthis", npcID=243346, mapID=2393, x=0.4807, y=0.5501, faction="Horde", types={reagents=true, profession=true}, subtitle="Jewelcrafting Supplies", specialtyKey="specialty_jewelcrafting" }
+A{ name="Kalinda", npcID=243347, mapID=2393, x=0.4881, y=0.5441, faction="Horde", types={profession=true}, subtitle="Jewelcrafting Trainer", specialtyKey="trainer" }
+A{ name="Dolothos", npcID=243349, mapID=2393, x=0.4795, y=0.5380, faction="Horde", types={profession=true}, subtitle="Enchanting Trainer", specialtyKey="trainer" }
+A{ name="Lyna", npcID=243350, mapID=2393, x=0.4787, y=0.5338, faction="Horde", types={reagents=true, profession=true}, subtitle="Enchanting Supplies", specialtyKey="specialty_enchanting" }
+A{ name="Galana", npcID=243352, mapID=2393, x=0.4816, y=0.5403, faction="Horde", types={profession=true}, subtitle="Tailoring Trainer", specialtyKey="trainer" }
+A{ name="Deynna", npcID=243353, mapID=2393, x=0.4823, y=0.5428, faction="Horde", types={reagents=true, profession=true}, subtitle="Tailoring Supplies", specialtyKey="specialty_tailoring" }
+A{ name="Botanist Nathera", npcID=243355, mapID=2393, x=0.4823, y=0.5131, faction="Horde", types={profession=true}, subtitle="Herbalism Trainer", specialtyKey="trainer" }
+A{ name="Camberon", npcID=243357, mapID=2393, x=0.4692, y=0.5203, faction="Horde", types={profession=true}, subtitle="Alchemy Trainer", specialtyKey="trainer" }
+A{ name="Melaris", npcID=243359, mapID=2393, x=0.4694, y=0.5173, faction="Horde", types={reagents=true, profession=true}, subtitle="Alchemy Supplies", specialtyKey="specialty_alchemy" }
+A{ name="Zantasia", npcID=243553, mapID=2393, x=0.4686, y=0.5166, faction="Horde", types={profession=true}, subtitle="Inscription Trainer", specialtyKey="trainer" }
+A{ name="Lelorian", npcID=243555, mapID=2393, x=0.4666, y=0.5125, faction="Horde", types={reagents=true, profession=true}, subtitle="Inscription Supplies", specialtyKey="specialty_inscription" }
 A{ name="Dethelin", npcID=250982, mapID=2393, x=0.5250, y=0.4720, faction="Neutral", types={general=true}, note="ATT" }
 A{ name="Intrepid Entrepreneur", npcID=251248, mapID=2393, x=0.5770, y=0.7160, faction="Neutral", types={food=true}, note="ATT" }
-A{ name="Corlen Hordralin", npcID=252915, mapID=2393, x=0.4420, y=0.6280, faction="Neutral", types={general=true}, note="ATT" }
-A{ name="Hesta Forlath", npcID=252916, mapID=2393, x=0.4410, y=0.6280, faction="Neutral", types={general=true}, note="ATT" }
+A{ name="Corlen Hordralin", npcID=252915, mapID=2393, x=0.4422, y=0.6269, faction="Alliance", types={profession=true} }
+A{ name="Hesta Forlath", npcID=252916, mapID=2393, x=0.4415, y=0.6266, faction="Alliance", types={profession=true} }
 A{ name="Construct V'anore", npcID=252956, mapID=2393, x=0.5570, y=0.6580, faction="Neutral", types={transmog=true}, note="ATT" }
-A{ name="Maren Silverwing", npcID=255473, mapID=2393, x=0.4800, y=0.4920, faction="Neutral", types={transmog=true}, note="ATT" }
-A{ name="Triam Dawnsetter", npcID=255476, mapID=2393, x=0.4820, y=0.4910, faction="Neutral", types={food=true, transmog=true}, note="ATT" }
+A{ name="Drathen", npcID=253468, mapID=2393, x=0.4476, y=0.6026, faction="Alliance", types={profession=true} }
+A{ name="Maren Silverwing", npcID=255473, mapID=2393, x=0.4802, y=0.4925, faction="Horde", types={faction=true}, subtitle="Quartermaster" }
+A{ name="Triam Dawnsetter", npcID=255476, mapID=2393, x=0.4823, y=0.4927, faction="Horde", types={faction=true}, subtitle="Cosmetic Equipment Salvager" }
 A{ name="Rae'ana", npcID=255495, mapID=2393, x=0.4770, y=0.5050, faction="Neutral", types={faction=true}, repFactionID=2792, minStanding=7, note="ATT" }
 A{ name="Sergeant Vornin", npcID=255503, mapID=2393, x=0.4870, y=0.5040, faction="Neutral", types={faction=true}, repFactionID=2792, minStanding=6, note="ATT" }
+A{ name="Irodalmin", npcID=256026, mapID=2393, x=0.4825, y=0.5129, faction="Horde", types={reagents=true, profession=true}, subtitle="Herbalism Supplies", specialtyKey="specialty_herbalism" }
 A{ name="Gamesmaster Fleurian", npcID=256084, mapID=2393, x=0.3160, y=0.7660, faction="Neutral", types={transmog=true}, note="ATT" }
 A{ name="Dennia Silvertongue", npcID=256828, mapID=2393, x=0.5110, y=0.5650, faction="Neutral", types={decor=true}, note="ATT — This Vendor sells additional copies of the Promotional Decor only to players that have obtained it when the Promotion wa" }
-A{ name="Enchanter Erodin", npcID=257939, mapID=2393, x=0.4180, y=0.6690, faction="Neutral", types={transmog=true}, note="ATT" }
+A{ name="Sylann", npcID=257913, mapID=2393, x=0.5636, y=0.6993, faction="Horde", types={profession=true}, subtitle="Cooking Trainer", specialtyKey="trainer" }
+A{ name="Quelis", npcID=257914, mapID=2393, x=0.5636, y=0.6993, faction="Horde", types={reagents=true, profession=true}, subtitle="Cooking Supplies", specialtyKey="specialty_cooking" }
+A{ name="Enchanter Erodin", npcID=257939, mapID=2393, x=0.4186, y=0.6709, faction="Alliance", types={transmog=true, profession=true} }
 A{ name="Construct Ali'a", npcID=258181, mapID=2393, x=0.5580, y=0.6600, faction="Neutral", types={general=true}, note="ATT" }
 A{ name="Farstrider Aerieminder", npcID=258550, mapID=2393, x=0.2480, y=0.6940, faction="Neutral", types={food=true}, note="ATT — If you feed a nearby Mischevious Chick, you'll get a reward." }
-A{ name="Andra", npcID=259722, mapID=2393, x=0.4170, y=0.6640, faction="Neutral", types={transmog=true}, note="ATT" }
-A{ name="Agmera", npcID=261303, mapID=2393, x=0.4210, y=0.5870, faction="Neutral", types={food=true}, note="ATT" }
+A{ name="Velothir", npcID=258610, mapID=2393, x=0.4744, y=0.7887, faction="Alliance", types={profession=true} }
+A{ name="Andra", npcID=259722, mapID=2393, x=0.4182, y=0.6636, faction="Alliance", types={repair=true, profession=true} }
+A{ name="Agmera", npcID=261303, mapID=2393, x=0.4218, y=0.5864, faction="Alliance", types={profession=true} }
 A{ name="Disguised Decor Duel Vendor", npcID=264056, mapID=2393, x=0.3160, y=0.7670, faction="Neutral", types={general=true}, note="ATT" }
 A{ name="Midsummer Merchant", npcID=267838, mapID=2393, x=0.4890, y=0.8090, faction="Alliance", types={general=true}, note="ATT" }
 A{ name="Richmond", npcID=267859, mapID=2393, x=0.3940, y=0.5940, faction="Neutral", types={transmog=true}, note="ATT — Kick three balls from the center of the field into either nearby goal." }

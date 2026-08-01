@@ -104,7 +104,15 @@ Maintainers merge exports into packs with:
 python3 tools/merge_export_to_seeds.py path/to/export.lua
 # or paste via stdin:
 python3 tools/merge_export_to_seeds.py -
+
+# Or pull learned/overrides straight from your local WoW SavedVariables:
+python3 tools/import_local_learned.py              # detect install → merge into packs/
+python3 tools/import_local_learned.py --dry-run    # preview without writing
 ```
+
+`import_local_learned.py` uses `tools/deploy.sh --list` to find your retail
+AddOns path, then reads `WTF/Account/*/SavedVariables/VendorMap.lua`. Quit WoW
+(or wait for a save) first so learned data is flushed to disk.
 
 
 
@@ -124,10 +132,23 @@ VendorMap/
 
 
 
-### Local testing of data packs
+### Local testing (deploy to WoW)
 
-WoW loads LoadOnDemand addons only from the top level of `Interface/AddOns/`, but in the
-repo the packs live under `packs/`. Symlink them back for local testing:
+Copy the addon into your retail `Interface/AddOns` folder (and refresh LoD pack
+symlinks):
+
+```bash
+tools/deploy.sh              # auto-detect AddOns path
+tools/deploy.sh --list       # show detected candidates
+tools/deploy.sh --addons "/path/to/_retail_/Interface/AddOns"
+WOW_ADDONS="/path/to/_retail_/Interface/AddOns" tools/deploy.sh
+```
+
+Then `/reload` in-game. Auto-detect checks common Battle.net, Wine/Lutris,
+Steam Proton, and WSL paths; override with `--addons` or `WOW_ADDONS` if needed.
+
+If the repo itself already lives under `Interface/AddOns/VendorMap`, you only
+need the pack symlinks:
 
 ```bash
 tools/link_packs.sh          # create symlinks in Interface/AddOns/

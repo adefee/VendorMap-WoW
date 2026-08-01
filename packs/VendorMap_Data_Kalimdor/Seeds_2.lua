@@ -1,6 +1,63 @@
 -- Auto-generated LoadOnDemand seed pack. ATT not required at runtime.
 local A = VendorMap.AddSeed
 
+A{ name="Midsummer Supplier", npcID=26123, mapID=89, x=0.6200, y=0.4860, faction="Alliance", types={food=true, transmog=true}, note="ATT — You will need 10 of these torches to complete the |cffffff00Torch Juggler|r achievement." }
+A{ name="Chapman", npcID=34382, mapID=89, x=0.6940, y=0.4050, faction="Neutral", types={food=true, transmog=true} }
+A{ name="Ikaneba Summerset", npcID=34681, mapID=89, x=0.6160, y=0.4960, faction="Alliance", types={food=true} }
+A{ name="Lovely Merchant", npcID=37674, mapID=89, x=0.4520, y=0.5760, faction="Alliance", types={food=true, transmog=true} }
+A{ name="Moon Priestess Lasara", npcID=50305, mapID=89, x=0.3617, y=0.4849, faction="Alliance", types={transmog=true, faction=true}, repFactionID=69, minStanding=42000 }
+A{ name="Lord Candren", npcID=50307, mapID=89, x=0.3710, y=0.4740, faction="Alliance", types={transmog=true, faction=true}, repFactionID=1134 }
+A{ name="Hugo Lentner", npcID=52637, mapID=89, x=0.5000, y=0.3280, faction="Alliance", types={general=true} }
+A{ name="Layna Karner", npcID=52641, mapID=89, x=0.5660, y=0.5260, faction="Alliance", types={general=true} }
+A{ name="Rissa Halding", npcID=52643, mapID=89, x=0.5025, y=0.3260, faction="Alliance", types={general=true} }
+A{ name="Tarien Silverdew", npcID=52644, mapID=89, x=0.5460, y=0.2980, faction="Alliance", types={general=true} }
+A{ name="Astrid Langstrump", npcID=55285, mapID=89, x=0.4820, y=0.2180, faction="Alliance", types={faction=true}, repFactionID=1134, minStanding=42000 }
+A{ name="\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"Cookie\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" McWeaksauce", npcID=17246, mapID=97, x=0.4660, y=0.7060, faction="Alliance", types={general=true} }
+A{ name="Noblegarden Vendor", npcID=32836, mapID=97, x=0.4901, y=0.5119, faction="Alliance", types={food=true, transmog=true} }
+A{ name="Chapman", npcID=34382, mapID=97, x=0.4780, y=0.5590, faction="Neutral", types={food=true, transmog=true} }
+A{ name="Oss", npcID=16632, mapID=103, x=0.4680, y=0.6040, faction="Alliance", types={general=true} }
+A{ name="Feera", npcID=16657, mapID=103, x=0.5360, y=0.9080, faction="Alliance", types={general=true} }
+A{ name="Altaa", npcID=16705, mapID=103, x=0.2810, y=0.6190, faction="Alliance", types={general=true} }
+A{ name="Arras", npcID=16713, mapID=103, x=0.6130, y=0.8930, faction="Alliance", types={general=true} }
+A{ name="Ven", npcID=16714, mapID=103, x=0.6980, y=0.8940, faction="Alliance", types={general=true} }
+A{ name="Avelii", npcID=16715, mapID=103, x=0.4860, y=0.9020, faction="Alliance", types={general=true} }
+A{ name="Gornii", npcID=16716, mapID=103, x=0.7150, y=0.9170, faction="Alliance", types={general=true} }
+A{ name="Phea", npcID=16718, mapID=103, x=0.5440, y=0.2630, faction="Alliance", types={general=true} }
+A{ name="Egomis", npcID=16722, mapID=103, x=0.3990, y=0.4020, faction="Alliance", types={general=true} }
+A{ name="Muhaa", npcID=16735, mapID=103, x=0.4580, y=0.8920, faction="Alliance", types={general=true} }
+A{ name="Caregiver Breel", npcID=16739, mapID=103, x=0.5950, y=0.1876, faction="Alliance", types={general=true} }
+A{ name="Mahri", npcID=16747, mapID=103, x=0.7060, y=0.9220, faction="Alliance", types={general=true} }
+A{ name="Haferet", npcID=16748, mapID=103, x=0.6660, y=0.7370, faction="Alliance", types={general=true} }
+A{ name="Yil", npcID=16750, mapID=103, x=0.6760, y=0.9460, faction="Alliance", types={general=true} }
+A{ name="Merran", npcID=16751, mapID=103, x=0.5990, y=0.8860, faction="Alliance", types={general=true} }
+A{ name="Gotaan", npcID=16753, mapID=103, x=0.6760, y=0.9600, faction="Alliance", types={general=true} }
+A{ name="Treall", npcID=16762, mapID=103, x=0.6820, y=0.9620, faction="Alliance", types={general=true} }
+A{ name="Ellomin", npcID=16765, mapID=103, x=0.7340, y=0.8460, faction="Alliance", types={general=true} }
+A{ name="Issca", npcID=16766, mapID=103, x=0.5380, y=0.6720, faction="Alliance", types={general=true} }
+A{ name="Neii", npcID=16767, mapID=103, x=0.6470, y=0.6850, faction="Alliance", types={general=true} }
+A{ name="Arred", npcID=17512, mapID=103, x=0.4550, y=0.2530, faction="Alliance", types={general=true} }
+A{ name="Torallius the Pack Handler", npcID=17584, mapID=103, x=0.8150, y=0.5140, faction="Alliance", types={faction=true}, repFactionID=930, minStanding=42000 }
+A{ name="Fingin", npcID=20121, mapID=103, x=0.2950, y=0.2010, faction="Alliance", types={general=true} }
+A{ name="Fingin", npcID=20121, mapID=103, x=0.5220, y=0.8460, faction="Alliance", types={general=true} }
+A{ name="Sixx", npcID=21019, mapID=103, x=0.3010, y=0.3380, faction="Alliance", types={general=true} }
+A{ name="Wolgren Jinglepocket", npcID=23010, mapID=103, x=0.5620, y=0.4960, faction="Neutral", types={general=true}, note="ATT" }
+A{ name="Midsummer Supplier", npcID=26123, mapID=103, x=0.4260, y=0.2560, faction="Alliance", types={food=true, transmog=true}, note="ATT — You will need 10 of these torches to complete the |cffffff00Torch Juggler|r achievement." }
+A{ name="Thoth", npcID=30716, mapID=103, x=0.4050, y=0.3980, faction="Alliance", types={general=true}, note="ATT" }
+A{ name="Lovely Merchant", npcID=37674, mapID=103, x=0.7400, y=0.5640, faction="Alliance", types={food=true, transmog=true}, note="ATT" }
+A{ name="Kadu", npcID=50306, mapID=103, x=0.5480, y=0.3680, faction="Alliance", types={transmog=true, faction=true}, repFactionID=930, minStanding=42000, note="ATT" }
+A{ name="Gaal", npcID=221817, mapID=103, x=0.5660, y=0.8180, faction="Alliance", types={general=true}, note="ATT" }
+A{ name="Fazu", npcID=18427, mapID=106, x=0.5340, y=0.5660, faction="Alliance", types={general=true}, note="ATT" }
+A{ name="Sophie Aaren", npcID=31021, mapID=131, x=0.6400, y=0.5520, faction="Neutral", types={transmog=true}, note="ATT" }
+A{ name="Toron Rockhoof", npcID=43410, mapID=198, x=0.6294, y=0.2192, faction="Alliance", types={repair=true} }
+A{ name="Provisioner Whitecloud", npcID=50314, mapID=198, x=0.6270, y=0.2380, faction="Neutral", types={food=true, transmog=true, faction=true}, repFactionID=1158, minStanding=3000, note="ATT — This version is only visible on the vendor when you aren't at the required reputation to purchase it yet on your current" }
+A{ name="Naresir Stormfury", npcID=54401, mapID=198, x=0.4782, y=0.7842, faction="Alliance", types={repair=true, transmog=true} }
+A{ name="Lurah Wrathvine", npcID=54402, mapID=198, x=0.4750, y=0.7749, faction="Alliance", types={transmog=true} }
+A{ name="Iris Moondreamer", npcID=71304, mapID=198, x=0.6280, y=0.2420, faction="Neutral", types={transmog=true}, note="ATT" }
+A{ name="Camran", npcID=44283, mapID=199, x=0.6740, y=0.4820, faction="Alliance", types={transmog=true}, note="ATT" }
+A{ name="Blacksmith Abasi", npcID=48617, mapID=249, x=0.5400, y=0.3320, faction="Neutral", types={food=true, transmog=true, faction=true}, repFactionID=1173, minStanding=3000, note="ATT — This version is only visible on the vendor when you aren't at the required reputation to purchase it yet on your current" }
+A{ name="Yasmin", npcID=49406, mapID=249, x=0.2660, y=0.0720, faction="Neutral", types={general=true}, note="ATT" }
+A{ name="Yasmin", npcID=163252, mapID=249, x=0.2660, y=0.0720, faction="Neutral", types={general=true}, note="ATT — Since this version of Yasmin is part of a faction, you can buy the sands of time item from her with a discount at higher" }
+A{ name="Damek Bloombeard", npcID=53214, mapID=338, x=0.4690, y=0.9000, faction="Horde", types={transmog=true}, note="ATT" }
 A{ name="Ayla Shadowstorm", npcID=53881, mapID=338, x=0.4410, y=0.8635, faction="Horde", types={transmog=true}, note="ATT" }
 A{ name="Varlan Highbough", npcID=53882, mapID=338, x=0.4445, y=0.8880, faction="Horde", types={transmog=true}, note="ATT" }
 A{ name="Ravika", npcID=113615, mapID=463, x=0.5740, y=0.6220, faction="Horde", types={transmog=true}, note="ATT — Only available with the quests |cFFFFD700The Legion Returns|r or |cFFFFD700To Be Prepared|r. Permanently available on th" }
@@ -10,9 +67,9 @@ A{ name="Haxxil Drinkmeister", npcID=70713, mapID=503, x=0.4150, y=0.7680, facti
 A{ name="Harr Grayhide", npcID=70714, mapID=503, x=0.4150, y=0.7680, faction="Horde", types={general=true}, note="ATT — On a Zeppelin, flying above and around the Arena." }
 A{ name="Card Trader Ami", npcID=70751, mapID=503, x=0.6040, y=0.7750, faction="Horde", types={food=true}, note="ATT — If you fail to kill Xan-Sallish for the 'Solving the Mystery' quest, you can buy this card again from this vendor." }
 A{ name="Tiana Nevermorn", npcID=115797, mapID=503, x=0.5960, y=0.7850, faction="Horde", types={food=true}, note="ATT" }
-A{ name="\"Bad Luck\" Symmes", npcID=145695, mapID=503, x=0.5080, y=0.2940, faction="Horde", types={general=true}, note="ATT" }
+A{ name="\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"Bad Luck\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" Symmes", npcID=145695, mapID=503, x=0.5080, y=0.2940, faction="Horde", types={general=true}, note="ATT" }
 A{ name="MOTHER", npcID=152194, mapID=1473, x=0.4820, y=0.7250, faction="Neutral", types={food=true}, note="ATT — MOTHER sells rank 3 essences for Echoes of Ny'alotha provided you have obtained them through other means on your account" }
-A{ name="Wrathion", npcID=155496, mapID=1473, x=0.4620, y=0.6400, faction="Neutral", types={food=true, transmog=true}, note="ATT — Requires completing the achievement |cffffff00Through the Depths of Visions|r. " }
+A{ name="Wrathion", npcID=155496, mapID=1473, x=0.4620, y=0.6400, faction="Neutral", types={food=true, transmog=true}, note="ATT — Requires completing the achievement |cffffff00Through the Depths of Visions|r." }
 A{ name="Provisioner Qorra", npcID=160714, mapID=1527, x=0.5510, y=0.3290, faction="Neutral", types={food=true, transmog=true, faction=true}, repFactionID=2417, minStanding=42000, note="ATT" }
 A{ name="Lonomia", npcID=240465, mapID=2351, x=0.6830, y=0.7550, faction="Neutral", types={general=true}, note="ATT" }
 A{ name="Gronthul", npcID=255278, mapID=2351, x=0.5410, y=0.5910, faction="Neutral", types={general=true}, note="ATT" }
@@ -20,10 +77,10 @@ A{ name="Shon'ja", npcID=255297, mapID=2351, x=0.5410, y=0.5900, faction="Neutra
 A{ name="Jehzar Starfall", npcID=255298, mapID=2351, x=0.5350, y=0.5850, faction="Neutral", types={general=true}, note="ATT" }
 A{ name="Lefton Farrer", npcID=255299, mapID=2351, x=0.5350, y=0.5850, faction="Neutral", types={general=true}, note="ATT" }
 A{ name="Botanist Boh'an", npcID=255301, mapID=2351, x=0.5360, y=0.5800, faction="Neutral", types={general=true}, note="ATT" }
-A{ name="\"Yen\" Malone", npcID=255319, mapID=2351, x=0.4010, y=0.7320, faction="Neutral", types={general=true}, note="ATT" }
-A{ name="\"High Tides\" Ren", npcID=255325, mapID=2351, x=0.3980, y=0.7280, faction="Neutral", types={general=true}, note="ATT" }
-A{ name="\"Len\" Splinthoof", npcID=255326, mapID=2351, x=0.3980, y=0.7020, faction="Neutral", types={general=true}, note="ATT — Inside the cave or outside fishing." }
-A{ name="\"Len\" Splinthoof", npcID=255326, mapID=2351, x=0.3990, y=0.7330, faction="Neutral", types={general=true}, note="ATT — Inside the cave or outside fishing." }
+A{ name="\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"Yen\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" Malone", npcID=255319, mapID=2351, x=0.4010, y=0.7320, faction="Neutral", types={general=true}, note="ATT" }
+A{ name="\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"High Tides\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" Ren", npcID=255325, mapID=2351, x=0.3980, y=0.7280, faction="Neutral", types={general=true}, note="ATT" }
+A{ name="\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"Len\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" Splinthoof", npcID=255326, mapID=2351, x=0.3980, y=0.7020, faction="Neutral", types={general=true}, note="ATT — Inside the cave or outside fishing." }
+A{ name="\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"Len\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" Splinthoof", npcID=255326, mapID=2351, x=0.3990, y=0.7330, faction="Neutral", types={general=true}, note="ATT — Inside the cave or outside fishing." }
 A{ name="Xiz'ro", npcID=255520, mapID=2351, x=0.5420, y=0.5800, faction="Neutral", types={general=true}, note="ATT" }
 
 VendorMap.NotifySeedPackLoaded("Kalimdor")

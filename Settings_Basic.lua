@@ -48,7 +48,20 @@ function ns.BuildBasicSettingsPage(frame)
         ns.GetDB().learnVendors = v
     end)
 
-    y = y - 36
+    y = y - 32
+    UI.CreateCheckbox(content, "Show approximate location pins", 16, y, function()
+        return ns.GetDB().showApproximatePins == true
+    end, function(v)
+        ns.GetDB().showApproximatePins = v and true or false
+    end)
+
+    local approxHint = content:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
+    approxHint:SetPoint("TOPLEFT", 40, y - 22)
+    approxHint:SetWidth(560)
+    approxHint:SetJustifyH("LEFT")
+    approxHint:SetText("Seed markers with no creature ID (Auction House, Bank, etc.). Often only a rough vicinity — off by default; visit the real NPC to learn an accurate pin.")
+
+    y = y - 52
     UI.CreateCycleButton(content, "Learned vs overrides:", LEARNED_OVERRIDE_OPTIONS, y, function()
         return ns.GetDB().learnedOverrideMode or "preferOverride"
     end, function(v)

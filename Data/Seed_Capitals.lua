@@ -29,7 +29,7 @@ A{ name = "Jessara Cordell", npcID = 1318, mapID = 84, x = 0.529, y = 0.743, fac
 A{ name = "Duncan Cullen", npcID = 1286, mapID = 84, x = 0.644, y = 0.684, faction = "Alliance", types = { repair = true } }
 A{ name = "Billibub Cogspinner", npcID = 5519, mapID = 84, x = 0.630, y = 0.316, faction = "Alliance", types = { profession = true }, note = "Engineering supplies" }
 A{ name = "Auctioneer", mapID = 84, x = 0.612, y = 0.704, faction = "Alliance", types = { general = true }, note = "AH — Trade District" }
-A{ name = "Bank of Stormwind", mapID = 84, x = 0.628, y = 0.780, faction = "Alliance", types = { general = true }, note = "Trade District bank" }
+A{ name = "Bank of Stormwind", mapID = 84, x = 0.628, y = 0.780, faction = "Alliance", types = { banker = true }, note = "Trade District bank" }
 
 ---------------------------------------------------------------------------
 -- Orgrimmar (85)
@@ -57,7 +57,7 @@ A{ name = "Handor", npcID = 3316, mapID = 85, x = 0.628, y = 0.448, faction = "H
 A{ name = "Jin'Sora", npcID = 3410, mapID = 85, x = 0.778, y = 0.386, faction = "Horde", types = { repair = true } }
 A{ name = "Rekkul", npcID = 3334, mapID = 85, x = 0.462, y = 0.502, faction = "Horde", types = { poison = true } }
 A{ name = "Auctioneer", mapID = 85, x = 0.540, y = 0.735, faction = "Horde", types = { general = true }, note = "AH — Valley of Strength" }
-A{ name = "Bank of Orgrimmar", mapID = 85, x = 0.488, y = 0.842, faction = "Horde", types = { general = true } }
+A{ name = "Bank of Orgrimmar", mapID = 85, x = 0.488, y = 0.842, faction = "Horde", types = { banker = true } }
 
 ---------------------------------------------------------------------------
 -- Ironforge (87)
@@ -74,7 +74,7 @@ A{ name = "Bombus Finespindle", npcID = 5128, mapID = 87, x = 0.394, y = 0.324, 
 A{ name = "Poranna Snowbraid", npcID = 5154, mapID = 87, x = 0.432, y = 0.288, faction = "Alliance", types = { profession = true }, note = "Tailoring" }
 A{ name = "Ulthaan", npcID = 5122, mapID = 87, x = 0.702, y = 0.482, faction = "Alliance", types = { mounts = true, stable = true } }
 A{ name = "Auctioneer", mapID = 87, x = 0.252, y = 0.742, faction = "Alliance", types = { general = true } }
-A{ name = "Ironforge Bank", mapID = 87, x = 0.354, y = 0.604, faction = "Alliance", types = { general = true } }
+A{ name = "Ironforge Bank", mapID = 87, x = 0.354, y = 0.604, faction = "Alliance", types = { banker = true } }
 
 ---------------------------------------------------------------------------
 -- Thunder Bluff (88)
@@ -133,4 +133,4 @@ A{ name = "Lyna", npcID = 16635, mapID = 110, x = 0.694, y = 0.244, faction = "H
 A{ name = "Zaralda", npcID = 16689, mapID = 110, x = 0.844, y = 0.802, faction = "Horde", types = { profession = true }, note = "Leatherworking" }
 A{ name = "Deynna", npcID = 16638, mapID = 110, x = 0.556, y = 0.510, faction = "Horde", types = { profession = true }, note = "Tailoring" }
 A{ name = "Auctioneer", mapID = 110, x = 0.924, y = 0.582, faction = "Horde", types = { general = true } }
-A{ name = "Bank", mapID = 110, x = 0.900, y = 0.432, faction = "Horde", types = { general = true } }
+A{ name = "Bank", mapID = 110, x = 0.900, y = 0.432, faction = "Horde", types = { banker = true } }

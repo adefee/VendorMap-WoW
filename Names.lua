@@ -102,8 +102,13 @@ function Names:Lookup(npcID)
     local title
     if C_TooltipInfo and C_TooltipInfo.GetHyperlink then
         local ok, tooltipData = pcall(C_TooltipInfo.GetHyperlink, ("unit:Creature-0-0-0-0-%d-0000000000"):format(npcID))
-        if ok and tooltipData and tooltipData.lines and tooltipData.lines[1] then
-            title = tooltipData.lines[1].leftText
+        if ok and tooltipData then
+            if ns.SurfaceTooltipData then
+                ns.SurfaceTooltipData(tooltipData)
+            end
+            if tooltipData.lines and tooltipData.lines[1] then
+                title = tooltipData.lines[1].leftText
+            end
         end
     end
 
@@ -129,8 +134,16 @@ function Names:DisplayName(info)
             return resolved
         end
     end
-    if info.name and info.name ~= "" then
+    if type(info.name) == "string" and info.name ~= "" then
         return info.name
+    end
+    -- Location markers / failed lookups: recover a useful label from subtitle.
+    if ns.IsAuctionHouseName and ns.IsAuctionHouseName(info.subtitle) then
+        info.name = "Auctioneer"
+        return info.name
+    end
+    if type(info.subtitle) == "string" and info.subtitle ~= "" then
+        return info.subtitle
     end
     if npcID then
         return ("Vendor %d"):format(npcID)

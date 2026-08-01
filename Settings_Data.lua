@@ -32,13 +32,17 @@ local function CollectOverrideEntries()
     if type(VendorMapOverridesDB) ~= "table" then
         return entries
     end
-    for npcID, ov in pairs(VendorMapOverridesDB) do
+    for key, ov in pairs(VendorMapOverridesDB) do
         if type(ov) == "table" then
-            local id = tonumber(npcID) or npcID
-            local vendor = ns.Database and ns.Database:FindByNpcID(id)
+            local id = tonumber(key) or key
+            local vendor = ns.Database and (
+                (ns.Database.FindByOverrideKey and ns.Database:FindByOverrideKey(id))
+                or ns.Database:FindByNpcID(id)
+            )
             local name = (ov.name and ov.name ~= "" and ov.name)
-                or (vendor and vendor.name)
-                or ("npc " .. tostring(id))
+                or (vendor and ((ns.Names and ns.Names:DisplayName(vendor)) or vendor.name))
+                or (type(id) == "number" and ("npc " .. tostring(id)))
+                or tostring(id)
             entries[#entries + 1] = {
                 npcID = id,
                 ov = ov,
@@ -54,9 +58,21 @@ local function CollectOverrideEntries()
 end
 
 local function TypesSummary(ov, vendor)
-    local types = ov.types or (vendor and vendor.types)
-    if ns.TypeLabelList and types then
-        return ns.TypeLabelList(types)
+    local info = {
+        types = ov.types or (vendor and vendor.types),
+        specialtyKey = ov.specialtyKey or (vendor and vendor.specialtyKey),
+        subtitle = ov.subtitle or (vendor and vendor.subtitle),
+        name = ov.name or (vendor and vendor.name),
+        note = ov.note or (vendor and vendor.note),
+    }
+    if ns.VendorTypeLabelList then
+        local label = ns.VendorTypeLabelList(info)
+        if label and label ~= "" then
+            return label
+        end
+    end
+    if ns.TypeLabelList and info.types then
+        return ns.TypeLabelList(info.types)
     end
     return "—"
 end
@@ -157,12 +173,16 @@ local function BuildOverrideRow(parent, entry, y)
         editBtn:SetScript("OnClick", function()
             local info = entry.vendor
             if not info then
+                local key = entry.npcID
                 info = {
-                    npcID = entry.npcID,
+                    npcID = type(key) == "number" and key or nil,
+                    id = key,
                     name = entry.name,
                     faction = entry.ov.faction or "Neutral",
                     types = entry.ov.types or { general = true },
                     note = entry.ov.note,
+                    subtitle = entry.ov.subtitle,
+                    specialtyKey = entry.ov.specialtyKey,
                     hidden = entry.ov.hidden,
                     iconPreset = entry.ov.iconPreset,
                     iconCustom = entry.ov.iconCustom,

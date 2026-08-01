@@ -53,6 +53,9 @@ local function NormalizeVendor(v, source)
     if not v or not v.x or not v.y then
         return nil
     end
+    if ns.MigrateLegacyLearnNote then
+        ns.MigrateLegacyLearnNote(v)
+    end
     local mapID = ResolveMapID(v)
     if not mapID then
         return nil
@@ -61,11 +64,56 @@ local function NormalizeVendor(v, source)
     if not next(types) then
         types.general = true
     end
-    local name = v.name or "Unknown Vendor"
+    local name = v.name
+    if type(name) ~= "string" or name == "" then
+        name = "Unknown Vendor"
+    end
     if v.npcID and ns.Names then
         local resolved = ns.Names:Lookup(v.npcID)
         if resolved then
             name = resolved
+        end
+    end
+    local learnedFrom = v.learnedFrom
+    if type(learnedFrom) ~= "string" or learnedFrom == "" then
+        learnedFrom = nil
+    end
+    local specialtyKey = v.specialtyKey
+    if specialtyKey == "" or specialtyKey == "auto" then
+        specialtyKey = nil
+    end
+    -- Backfill craft/trainer specialty from subtitle/note for older learned rows.
+    if not specialtyKey and ns.DetectSpecialtyKey then
+        specialtyKey = ns.DetectSpecialtyKey({
+            subtitle = v.subtitle,
+            name = name,
+            note = v.note,
+            types = types,
+            specialtyKey = v.specialtyKey,
+        })
+    end
+    -- Name/subtitle with whole-word "mount" (or riding trainer) → mounts.
+    if ns.TextLooksLikeMounts and (ns.TextLooksLikeMounts(v.subtitle) or ns.TextLooksLikeMounts(name)) then
+        types.mounts = true
+        types.general = nil
+        if specialtyKey == "trainer" then
+            specialtyKey = nil
+        end
+        local title = string.lower((v.subtitle or "") .. " " .. (name or ""))
+        if title:find("trainer", 1, true) then
+            types.profession = nil
+        end
+    end
+    -- Name/subtitle with pet/breeder/kennel → pets.
+    if ns.TextLooksLikePets and (ns.TextLooksLikePets(v.subtitle) or ns.TextLooksLikePets(name)) then
+        types.pets = true
+        types.general = nil
+        if specialtyKey == "trainer" then
+            specialtyKey = nil
+        end
+        local title = string.lower((v.subtitle or "") .. " " .. (name or ""))
+        if title:find("trainer", 1, true) then
+            types.profession = nil
         end
     end
     return {
@@ -79,7 +127,8 @@ local function NormalizeVendor(v, source)
         types = types,
         note = v.note,
         subtitle = v.subtitle,
-        specialtyKey = v.specialtyKey,
+        specialtyKey = specialtyKey,
+        learnedFrom = learnedFrom,
         repFactionID = v.repFactionID,
         minStanding = v.minStanding,
         source = source,
@@ -174,6 +223,16 @@ local function GetOverrideForNpc(npcID)
     return nil
 end
 
+local function GetOverrideForVendor(vendor)
+    if not vendor or not ns.GetVendorOverride then
+        return nil
+    end
+    if ns.VendorOverrideKey then
+        return ns.GetVendorOverride(ns.VendorOverrideKey(vendor))
+    end
+    return ns.GetVendorOverride(vendor.npcID)
+end
+
 local function OverrideHasField(ov, field)
     if type(ov) ~= "table" then
         return false
@@ -204,6 +263,35 @@ local function ForEachVendorWithNpcID(npcID, fn)
         for _, vendor in ipairs(list) do
             if vendor.npcID == npcID then
                 fn(vendor)
+            end
+        end
+    end
+end
+
+--- Apply an override key to every matching indexed row (npcID or synthetic seed id).
+local function ForEachVendorMatchingOverrideKey(key, fn)
+    if key == nil or key == "" or not fn then
+        return
+    end
+    local seen = {}
+    local function visit(vendor)
+        if vendor and not seen[vendor] then
+            seen[vendor] = true
+            fn(vendor)
+        end
+    end
+    local npcID = tonumber(key)
+    if npcID then
+        ForEachVendorWithNpcID(npcID, visit)
+        visit(byNpcID[npcID])
+        return
+    end
+    if type(key) == "string" then
+        for _, list in pairs(indexByMap) do
+            for _, vendor in ipairs(list) do
+                if vendor.id == key then
+                    visit(vendor)
+                end
             end
         end
     end
@@ -262,12 +350,30 @@ local function MergeLearnedOnto(existing, learned, ov)
         local noteLocked = OverrideHasField(ov, "note")
             and (preferOv or ProtectOverrideNotes())
         if not noteLocked then
-            existing.note = learned.note
+            -- Ignore legacy provenance strings if any still arrive as note.
+            if not (ns.ParseLegacyLearnNote and ns.ParseLegacyLearnNote(learned.note)) then
+                existing.note = learned.note
+            end
         end
     end
 
-    if learned.subtitle ~= nil and not (lockFields and OverrideHasField(ov, "subtitle")) then
-        existing.subtitle = learned.subtitle ~= "" and learned.subtitle or nil
+    -- Only apply a real subtitle; never clear a prior title with a failed capture.
+    if learned.subtitle and learned.subtitle ~= ""
+        and not (lockFields and OverrideHasField(ov, "subtitle"))
+    then
+        existing.subtitle = learned.subtitle
+    end
+
+    -- Persist auto-detected craft/trainer specialty from visits (unless user overrode it).
+    if learned.specialtyKey and learned.specialtyKey ~= "" and learned.specialtyKey ~= "auto" then
+        local ovLocksSpecialty = type(ov) == "table" and ov.specialtyKey ~= nil
+        if not ovLocksSpecialty then
+            existing.specialtyKey = learned.specialtyKey
+        end
+    end
+
+    if learned.learnedFrom and learned.learnedFrom ~= "" then
+        existing.learnedFrom = learned.learnedFrom
     end
 
     existing.source = "learned"
@@ -355,17 +461,12 @@ local function ApplyOverrides()
     if type(overrides) ~= "table" then
         return
     end
-    -- Apply to every indexed row with that npcID (not only byNpcID's last copy).
-    -- Core hubs + ATT packs often share an npcID; the pin you see may not be byNpcID[id].
-    for npcID, ov in pairs(overrides) do
-        local id = tonumber(npcID) or npcID
+    -- Match by npcID or synthetic seed id (hub Auctioneer/Bank markers have no npcID).
+    for key, ov in pairs(overrides) do
         if type(ov) == "table" then
-            ForEachVendorWithNpcID(id, function(vendor)
+            ForEachVendorMatchingOverrideKey(key, function(vendor)
                 ApplyOverrideToVendor(vendor, ov)
             end)
-            if byNpcID[id] then
-                ApplyOverrideToVendor(byNpcID[id], ov)
-            end
         end
     end
 end
@@ -398,7 +499,10 @@ local function PrepareSeedRow(raw)
     end
 
     raw.mapID = raw._seedMapID
-    local name = raw._seedName or "Unknown Vendor"
+    local name = raw._seedName
+    if type(name) ~= "string" or name == "" then
+        name = "Unknown Vendor"
+    end
     if raw.npcID and ns.Names then
         local resolved = ns.Names:Lookup(raw.npcID)
         if resolved then
@@ -414,6 +518,30 @@ local function PrepareSeedRow(raw)
     raw.note = raw._seedNote
     raw.subtitle = raw._seedSubtitle
     raw.specialtyKey = raw._seedSpecialtyKey
+    -- Seed name/subtitle with whole-word "mount" (or riding trainer) → mounts.
+    if ns.TextLooksLikeMounts and (ns.TextLooksLikeMounts(raw.subtitle) or ns.TextLooksLikeMounts(name)) then
+        raw.types.mounts = true
+        raw.types.general = nil
+        if raw.specialtyKey == "trainer" then
+            raw.specialtyKey = nil
+        end
+        local title = string.lower((raw.subtitle or "") .. " " .. (name or ""))
+        if title:find("trainer", 1, true) then
+            raw.types.profession = nil
+        end
+    end
+    -- Seed name/subtitle with pet/breeder/kennel → pets.
+    if ns.TextLooksLikePets and (ns.TextLooksLikePets(raw.subtitle) or ns.TextLooksLikePets(name)) then
+        raw.types.pets = true
+        raw.types.general = nil
+        if raw.specialtyKey == "trainer" then
+            raw.specialtyKey = nil
+        end
+        local title = string.lower((raw.subtitle or "") .. " " .. (name or ""))
+        if title:find("trainer", 1, true) then
+            raw.types.profession = nil
+        end
+    end
     raw.repFactionID = raw._seedRep
     raw.minStanding = raw._seedStanding
     raw.source = "seed"
@@ -438,7 +566,7 @@ function Database:Rebuild()
             local vendor = NormalizeVendor(raw, "learned")
             if vendor then
                 if vendor.npcID and byNpcID[vendor.npcID] then
-                    local ov = GetOverrideForNpc(vendor.npcID)
+                    local ov = GetOverrideForVendor(vendor) or GetOverrideForNpc(vendor.npcID)
                     -- All indexed rows with this npcID (hubs + packs can share one ID).
                     ForEachVendorWithNpcID(vendor.npcID, function(existing)
                         MergeLearnedOnto(existing, vendor, ov)
@@ -477,17 +605,23 @@ end
 local function SubtypeVisible(vendor)
     local db = ns.GetDB()
     local name = vendor and vendor.name
-    if ns.IsAuctionHouseName(name) then
+    if ns.IsAuctionHouseName(name) or ns.IsAuctionHouseName(vendor and vendor.subtitle) then
         return db.types[ns.AUCTION_HOUSE_DISPLAY_KEY] ~= false
-    end
-    if ns.IsPetSuppliesName(name) then
-        return db.types[ns.PET_SUPPLIES_DISPLAY_KEY] ~= false
     end
     local specialty = ns.GetSpecialtySubtype and ns.GetSpecialtySubtype(vendor)
     if specialty then
         return db.types[specialty.key] ~= false
     end
     return true
+end
+
+--- Vicinity markers (no creature ID) are hidden unless the user opts in.
+local function ApproximateVisible(vendor)
+    if vendor and vendor.npcID then
+        return true
+    end
+    local db = ns.GetDB()
+    return db and db.showApproximatePins == true
 end
 
 local function TranslateToMap(fromMapID, x, y, toMapID)
@@ -592,6 +726,7 @@ function Database:GetPinsForMap(viewMapID, outBuffer)
         if list then
             for _, vendor in ipairs(list) do
                 if not vendor.hidden
+                    and ApproximateVisible(vendor)
                     and FactionAllowed(vendor.faction)
                     and TypesAllowed(vendor.types)
                     and SubtypeVisible(vendor)
@@ -626,6 +761,7 @@ function Database:GetPinsForMap(viewMapID, outBuffer)
                             row.note = vendor.note
                             row.subtitle = vendor.subtitle
                             row.specialtyKey = vendor.specialtyKey
+                            row.learnedFrom = vendor.learnedFrom
                             row.repFactionID = vendor.repFactionID
                             row.minStanding = vendor.minStanding
                             row.source = vendor.source
@@ -650,24 +786,115 @@ function Database:FindByNpcID(npcID)
     return byNpcID[npcID]
 end
 
+--- Resolve a vendor for an override key (numeric npcID or synthetic seed id).
+function Database:FindByOverrideKey(key)
+    if key == nil or key == "" then
+        return nil
+    end
+    local npcID = tonumber(key)
+    if npcID and byNpcID[npcID] then
+        return byNpcID[npcID]
+    end
+    if type(key) == "string" then
+        for _, list in pairs(indexByMap) do
+            for _, vendor in ipairs(list) do
+                if vendor.id == key then
+                    return vendor
+                end
+            end
+        end
+    end
+    return nil
+end
+
 function Database:GetIndexByMap()
     return indexByMap
 end
 
+-- Learned rows differ meaningfully? Coordinate jitter within POSITION_EPSILON is
+-- ignored so standing still (or map float noise) is not reported as a change.
+local POSITION_EPSILON = 0.002
+
+local function TypesEqual(a, b)
+    a, b = a or {}, b or {}
+    for k, v in pairs(a) do
+        if v and not b[k] then
+            return false
+        end
+    end
+    for k, v in pairs(b) do
+        if v and not a[k] then
+            return false
+        end
+    end
+    return true
+end
+
+local function LearnedVendorChanged(prev, vendor)
+    if (prev.name or "") ~= (vendor.name or "") then return true end
+    if prev.mapID ~= vendor.mapID then return true end
+    if math.abs((prev.x or 0) - (vendor.x or 0)) > POSITION_EPSILON then return true end
+    if math.abs((prev.y or 0) - (vendor.y or 0)) > POSITION_EPSILON then return true end
+    if (prev.faction or "") ~= (vendor.faction or "") then return true end
+    if (prev.subtitle or "") ~= (vendor.subtitle or "") then return true end
+    if (prev.specialtyKey or "") ~= (vendor.specialtyKey or "") then return true end
+    if (prev.note or "") ~= (vendor.note or "") then return true end
+    if (prev.learnedFrom or "") ~= (vendor.learnedFrom or "") then return true end
+    if not TypesEqual(prev.types, vendor.types) then return true end
+    return false
+end
+
+--- Returns isNew, changed. isNew when a new learned row is appended; changed when an
+--- existing row is replaced with meaningfully different data (see LearnedVendorChanged).
 function Database:UpsertLearned(vendor)
     VendorMapLearnedDB = VendorMapLearnedDB or {}
+    if ns.MigrateLegacyLearnNote then
+        ns.MigrateLegacyLearnNote(vendor)
+    end
     local npcID = vendor.npcID
     local replaced = false
+    local changed = false
     if npcID then
         for i, existing in ipairs(VendorMapLearnedDB) do
             if existing.npcID == npcID then
+                local prev = existing
+                if ns.MigrateLegacyLearnNote then
+                    ns.MigrateLegacyLearnNote(prev)
+                end
+                -- Keep a previously captured subtitle when this visit failed to read one.
+                if (not vendor.subtitle or vendor.subtitle == "") and prev.subtitle and prev.subtitle ~= "" then
+                    vendor.subtitle = prev.subtitle
+                end
+                -- Notes are user/seed text only — never drop a real note for nil.
+                if (not vendor.note or vendor.note == "") and prev.note and prev.note ~= "" then
+                    vendor.note = prev.note
+                end
+                if (not vendor.learnedFrom or vendor.learnedFrom == "")
+                    and prev.learnedFrom and prev.learnedFrom ~= ""
+                then
+                    vendor.learnedFrom = prev.learnedFrom
+                end
+                -- Keep a previously detected specialty when this visit couldn't classify.
+                if (not vendor.specialtyKey or vendor.specialtyKey == "" or vendor.specialtyKey == "auto")
+                    and prev.specialtyKey and prev.specialtyKey ~= "" and prev.specialtyKey ~= "auto"
+                then
+                    vendor.specialtyKey = prev.specialtyKey
+                end
+                -- Re-detect from preserved subtitle/note if still unset.
+                if (not vendor.specialtyKey or vendor.specialtyKey == "" or vendor.specialtyKey == "auto")
+                    and ns.DetectSpecialtyKey
+                then
+                    vendor.specialtyKey = ns.DetectSpecialtyKey(vendor)
+                end
+                changed = LearnedVendorChanged(prev, vendor)
                 VendorMapLearnedDB[i] = vendor
                 replaced = true
                 break
             end
         end
     end
-    if not replaced then
+    local isNew = not replaced
+    if isNew then
         VendorMapLearnedDB[#VendorMapLearnedDB + 1] = vendor
     end
 
@@ -695,6 +922,8 @@ function Database:UpsertLearned(vendor)
     end
 
     ns.RefreshAll()
+
+    return isNew, changed
 end
 
 function Database:Count()

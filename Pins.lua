@@ -10,8 +10,8 @@ local function PrimaryType(types)
     -- transmog then faction/rep last.
     -- e.g. profession+reagents → profession; food+transmog+faction → food.
     local priority = {
-        "barber", "innkeeper", "profession", "repair", "reagents", "mounts", "stable",
-        "decor", "poison", "ammo", "food", "general",
+        "barber", "innkeeper", "banker", "profession", "class", "repair", "reagents", "mounts", "pets", "stable",
+        "decor", "poison", "ammo", "food", "trainingdummy", "general",
         "transmog", "faction",
     }
     for _, key in ipairs(priority) do

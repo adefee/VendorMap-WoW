@@ -12,7 +12,7 @@ A{ name = "Trader Endarno", npcID = 19235, mapID = 111, x = 0.668, y = 0.684, fa
 A{ name = "Yurial Soulwater", npcID = 19234, mapID = 111, x = 0.442, y = 0.364, faction = "Neutral", types = { profession = true } }
 A{ name = "Barber Shop", mapID = 111, x = 0.582, y = 0.482, faction = "Neutral", types = { barber = true } }
 A{ name = "Stable Master", mapID = 111, x = 0.672, y = 0.562, faction = "Neutral", types = { stable = true } }
-A{ name = "Bank", mapID = 111, x = 0.582, y = 0.612, faction = "Neutral", types = { general = true } }
+A{ name = "Bank", mapID = 111, x = 0.582, y = 0.612, faction = "Neutral", types = { banker = true } }
 A{ name = "Auctioneer", mapID = 111, x = 0.572, y = 0.712, faction = "Neutral", types = { general = true } }
 
 ---------------------------------------------------------------------------
@@ -26,7 +26,7 @@ A{ name = "Magister Arlan", mapID = 125, x = 0.392, y = 0.562, faction = "Neutra
 A{ name = "Debbi Moore", npcID = 29528, mapID = 125, x = 0.497, y = 0.555, faction = "Neutral", types = { general = true } }
 A{ name = "Bragund Brightlink", npcID = 28994, mapID = 125, x = 0.452, y = 0.286, faction = "Neutral", types = { repair = true } }
 A{ name = "Stable Master", mapID = 125, x = 0.586, y = 0.392, faction = "Neutral", types = { stable = true } }
-A{ name = "Bank", mapID = 125, x = 0.532, y = 0.152, faction = "Neutral", types = { general = true }, note = "Alliance / Horde banks nearby" }
+A{ name = "Bank", mapID = 125, x = 0.532, y = 0.152, faction = "Neutral", types = { banker = true }, note = "Alliance / Horde banks nearby" }
 A{ name = "Auctioneer", mapID = 125, x = 0.382, y = 0.252, faction = "Neutral", types = { general = true } }
 
 ---------------------------------------------------------------------------
@@ -40,7 +40,7 @@ A{ name = "First Arcanist Thalyssra", mapID = 627, x = 0.362, y = 0.468, faction
 A{ name = "Reagent Vendor", mapID = 627, x = 0.388, y = 0.542, faction = "Neutral", types = { reagents = true } }
 A{ name = "Repair Services", mapID = 627, x = 0.402, y = 0.342, faction = "Neutral", types = { repair = true } }
 A{ name = "Stable Master", mapID = 627, x = 0.586, y = 0.392, faction = "Neutral", types = { stable = true } }
-A{ name = "Bank", mapID = 627, x = 0.532, y = 0.152, faction = "Neutral", types = { general = true } }
+A{ name = "Bank", mapID = 627, x = 0.532, y = 0.152, faction = "Neutral", types = { banker = true } }
 A{ name = "Auction House", mapID = 627, x = 0.382, y = 0.252, faction = "Neutral", types = { general = true } }
 
 ---------------------------------------------------------------------------
@@ -92,7 +92,7 @@ A{ name = "Reagents", mapID = 1670, x = 0.648, y = 0.312, faction = "Neutral", t
 A{ name = "Barber Shop", mapID = 1670, x = 0.612, y = 0.482, faction = "Neutral", types = { barber = true } }
 A{ name = "Stable Master", mapID = 1670, x = 0.598, y = 0.524, faction = "Neutral", types = { stable = true } }
 A{ name = "Auction House", mapID = 1670, x = 0.672, y = 0.722, faction = "Neutral", types = { general = true } }
-A{ name = "Bank", mapID = 1670, x = 0.652, y = 0.268, faction = "Neutral", types = { general = true } }
+A{ name = "Bank", mapID = 1670, x = 0.652, y = 0.268, faction = "Neutral", types = { banker = true } }
 A{ name = "Transmogrifier", mapID = 1670, x = 0.638, y = 0.684, faction = "Neutral", types = { transmog = true } }
 
 ---------------------------------------------------------------------------
@@ -105,7 +105,7 @@ A{ name = "Reagent Vendor", mapID = 2112, x = 0.372, y = 0.528, faction = "Neutr
 A{ name = "Dragonriding / Mount Vendor", mapID = 2112, x = 0.262, y = 0.508, faction = "Neutral", types = { mounts = true } }
 A{ name = "Stable Master", mapID = 2112, x = 0.278, y = 0.492, faction = "Neutral", types = { stable = true } }
 A{ name = "Auction House", mapID = 2112, x = 0.442, y = 0.598, faction = "Neutral", types = { general = true } }
-A{ name = "Bank", mapID = 2112, x = 0.308, y = 0.548, faction = "Neutral", types = { general = true } }
+A{ name = "Bank", mapID = 2112, x = 0.308, y = 0.548, faction = "Neutral", types = { banker = true } }
 A{ name = "Transmogrifier", mapID = 2112, x = 0.452, y = 0.512, faction = "Neutral", types = { transmog = true } }
 A{ name = "Crafting Order / Profession Hub", mapID = 2112, x = 0.368, y = 0.612, faction = "Neutral", types = { profession = true } }
 
@@ -119,7 +119,7 @@ A{ name = "Reagent Vendor", mapID = 2339, x = 0.496, y = 0.504, faction = "Neutr
 A{ name = "General Goods", mapID = 2339, x = 0.508, y = 0.486, faction = "Neutral", types = { general = true } }
 A{ name = "Stable Master", mapID = 2339, x = 0.534, y = 0.452, faction = "Neutral", types = { stable = true } }
 A{ name = "Auction House", mapID = 2339, x = 0.562, y = 0.502, faction = "Neutral", types = { general = true } }
-A{ name = "Bank", mapID = 2339, x = 0.528, y = 0.528, faction = "Neutral", types = { general = true } }
+A{ name = "Bank", mapID = 2339, x = 0.528, y = 0.528, faction = "Neutral", types = { banker = true } }
 A{ name = "Transmogrifier", mapID = 2339, x = 0.548, y = 0.478, faction = "Neutral", types = { transmog = true } }
 A{ name = "Profession Hub", mapID = 2339, x = 0.472, y = 0.538, faction = "Neutral", types = { profession = true } }
 

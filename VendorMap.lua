@@ -28,6 +28,26 @@ local function MergeDefaults(db, defaults)
     end
 end
 
+--- Migrate legacy General Goods "petsupplies" subtype settings into the pets type.
+local function MigratePetSuppliesToPets(db)
+    if type(db) ~= "table" then
+        return
+    end
+    local legacy = ns.PET_SUPPLIES_DISPLAY_KEY or "petsupplies"
+    local function moveKey(tbl)
+        if type(tbl) ~= "table" then
+            return
+        end
+        if tbl[legacy] ~= nil and tbl.pets == nil then
+            tbl.pets = tbl[legacy]
+        end
+    end
+    moveKey(db.types)
+    moveKey(db.typeIconScale)
+    moveKey(db.typeIconPreset)
+    moveKey(db.typeIconCustom)
+end
+
 function ns.GetDB()
     return VendorMapDB
 end
@@ -123,6 +143,8 @@ local function OnAddonLoaded(name)
     end
 
     VendorMapDB = VendorMapDB or {}
+    -- Before defaults fill new keys: preserve a disabled Pet Supplies filter as pets=off.
+    MigratePetSuppliesToPets(VendorMapDB)
     MergeDefaults(VendorMapDB, ns.DEFAULTS)
     VendorMapDB.npcNames = VendorMapDB.npcNames or {}
     VendorMapLearnedDB = VendorMapLearnedDB or {}
