@@ -2,7 +2,7 @@
 ## Title: VendorMap Data: The Maelstrom
 ## Notes: LoadOnDemand vendor coordinates for The Maelstrom. Requires VendorMap.
 ## Author: VendorMap
-## Version: 0.6.6
+## Version: 0.6.7
 ## LoadOnDemand: 1
 ## Dependencies: VendorMap
 ## X-Category: Map

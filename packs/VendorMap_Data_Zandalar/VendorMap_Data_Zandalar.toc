@@ -2,7 +2,7 @@
 ## Title: VendorMap Data: Zandalar
 ## Notes: LoadOnDemand vendor coordinates for Zandalar. Requires VendorMap.
 ## Author: VendorMap
-## Version: 0.6.6
+## Version: 0.6.7
 ## LoadOnDemand: 1
 ## Dependencies: VendorMap
 ## X-Category: Map
