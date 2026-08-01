@@ -56,7 +56,7 @@ INTERFACE_VERSION = "120007, 120100"
 _DEPRECATED_NAME = re.compile(r"^\[Deprecated for 4\.x\]\s*", re.I)
 _COLOR_ESCAPE = re.compile(r"\|c[0-9A-Fa-f]{8}|\|r", re.I)
 NOTE_DESC_LIMIT = 120
-ADDON_VERSION = "0.6.5"
+ADDON_VERSION = "0.6.6"
 
 # Primary continent mapID → pack key (nested continents aliased in CONTINENT_ALIASES).
 CONTINENT_PACKS: dict[int, str] = {
