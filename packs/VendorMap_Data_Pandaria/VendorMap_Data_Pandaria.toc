@@ -2,7 +2,7 @@
 ## Title: VendorMap Data: Pandaria
 ## Notes: LoadOnDemand vendor coordinates for Pandaria. Requires VendorMap.
 ## Author: VendorMap
-## Version: 0.6.4
+## Version: 0.6.5
 ## LoadOnDemand: 1
 ## Dependencies: VendorMap
 ## X-Category: Map
