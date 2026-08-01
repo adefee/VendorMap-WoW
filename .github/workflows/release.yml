@@ -3,20 +3,31 @@ name: Release
 on:
   push:
     branches: [main]
+    tags:
+      - 'v*.*.*'
+  # Package an existing tag (bypasses the branch+tag skip in BigWigs).
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to package (e.g. v0.6.4)'
+        required: true
+        type: string
 
 # Allow the workflow to push the version-bump commit/tag and create releases.
 permissions:
   contents: write
 
 concurrency:
-  group: release
+  group: release-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  release:
+  # Auto-bump on pushes to main, then push a version tag. Packaging happens in
+  # the separate tag-triggered run below — BigWigs skips branch pushes when
+  # HEAD is already tagged ("Found future tag, not packaging").
+  bump:
     runs-on: ubuntu-latest
-    # Skip the run triggered by our own bump commit to avoid an infinite loop.
-    if: ${{ !contains(github.event.head_commit.message, '[release]') }}
+    if: ${{ github.event_name == 'push' && github.ref_type == 'branch' && !contains(github.event.head_commit.message, '[release]') }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -62,18 +73,23 @@ jobs:
           git push origin HEAD:${{ github.ref_name }}
           git push origin "${{ steps.bump.outputs.tag }}"
 
+  # Runs on tag pushes (from bump) or manual workflow_dispatch.
+  package:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref_type == 'tag') }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref }}
+
       # Reads the CurseForge project id from VendorMap.toc (## X-Curse-Project-ID)
       # and uploads when CF_API_KEY is set; always attaches the zip to a GitHub release.
-      #
-      # BigWigs skips branch pushes when HEAD is already tagged ("Found future tag,
-      # not packaging") to avoid double-builds with tag workflows. We create the
-      # release tag in this same job, so override GITHUB_REF to that tag.
       - name: Package and upload to CurseForge
         uses: BigWigsMods/packager@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
-          GITHUB_REF: refs/tags/${{ steps.bump.outputs.tag }}
-          GITHUB_REF_NAME: ${{ steps.bump.outputs.tag }}
         with:
           args: -g retail
