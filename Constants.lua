@@ -1,7 +1,7 @@
 local ADDON_NAME, ns = ...
 
 ns.ADDON_NAME = ADDON_NAME
-ns.VERSION = "0.6.3"
+ns.VERSION = "0.6.4"
 
 -- Vendor type keys (also used as filter + SavedVariables keys)
 -- Prefer Minimap\Tracking icons (same art as Blizzard townsfolk tracking / NPC hover).

@@ -2,7 +2,7 @@
 ## Title: VendorMap Data: Broken Isles
 ## Notes: LoadOnDemand vendor coordinates for Broken Isles. Requires VendorMap.
 ## Author: VendorMap
-## Version: 0.6.3
+## Version: 0.6.4
 ## LoadOnDemand: 1
 ## Dependencies: VendorMap
 ## X-Category: Map

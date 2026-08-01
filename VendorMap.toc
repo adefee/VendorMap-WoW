@@ -2,7 +2,7 @@
 ## Title: VendorMap
 ## Notes: Shows vendor, repair, barber, and utility NPC locations on the world map with filters. No HandyNotes required.
 ## Author: VendorMap
-## Version: 0.6.3
+## Version: 0.6.4
 ## SavedVariables: VendorMapDB, VendorMapLearnedDB, VendorMapOverridesDB
 ## OptionalDeps: TomTom, WaypointUI
 ## IconTexture: Interface\Minimap\Tracking\Repair
