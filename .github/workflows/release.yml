@@ -64,10 +64,16 @@ jobs:
 
       # Reads the CurseForge project id from VendorMap.toc (## X-Curse-Project-ID)
       # and uploads when CF_API_KEY is set; always attaches the zip to a GitHub release.
+      #
+      # BigWigs skips branch pushes when HEAD is already tagged ("Found future tag,
+      # not packaging") to avoid double-builds with tag workflows. We create the
+      # release tag in this same job, so override GITHUB_REF to that tag.
       - name: Package and upload to CurseForge
         uses: BigWigsMods/packager@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          GITHUB_REF: refs/tags/${{ steps.bump.outputs.tag }}
+          GITHUB_REF_NAME: ${{ steps.bump.outputs.tag }}
         with:
           args: -g retail
