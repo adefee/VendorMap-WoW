@@ -1,7 +1,7 @@
 name: Release Dev
-# Intent: bump a version on development and push a tag. Packaging is handled by
-# the Release workflow's tag trigger (BigWigs skips branch pushes when HEAD is
-# already tagged).
+# Intent: bump a version on development and push a tag. CurseForge packaging
+# happens on main via release.yml (GITHUB_TOKEN tag pushes cannot trigger a
+# separate Release run).
 
 on:
   push:
