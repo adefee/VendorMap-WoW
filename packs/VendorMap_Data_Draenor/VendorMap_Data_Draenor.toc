@@ -1,0 +1,10 @@
+## Interface: 120007, 120100
+## Title: VendorMap Data: Draenor
+## Notes: LoadOnDemand vendor coordinates for Draenor. Requires VendorMap.
+## Author: VendorMap
+## Version: 0.6.2
+## LoadOnDemand: 1
+## Dependencies: VendorMap
+## X-Category: Map
+
+Seeds.lua

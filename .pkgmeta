@@ -1,0 +1,30 @@
+package-as: VendorMap
+
+enable-nolib-creation: no
+
+# Files/dirs that should never ship in the CurseForge zip.
+ignore:
+  - .git
+  - .github
+  - .gitignore
+  - .pkgmeta
+  - README.md
+  - tools
+
+# Ship the in-repo LoD data packs as top-level sibling addons in the same zip.
+# Source paths are relative to the package root (package-as name).
+move-folders:
+  VendorMap/packs/VendorMap_Data_BrokenIsles: VendorMap_Data_BrokenIsles
+  VendorMap/packs/VendorMap_Data_Draenor: VendorMap_Data_Draenor
+  VendorMap/packs/VendorMap_Data_DragonIsles: VendorMap_Data_DragonIsles
+  VendorMap/packs/VendorMap_Data_EasternKingdoms: VendorMap_Data_EasternKingdoms
+  VendorMap/packs/VendorMap_Data_Kalimdor: VendorMap_Data_Kalimdor
+  VendorMap/packs/VendorMap_Data_KhazAlgar: VendorMap_Data_KhazAlgar
+  VendorMap/packs/VendorMap_Data_KulTiras: VendorMap_Data_KulTiras
+  VendorMap/packs/VendorMap_Data_Maelstrom: VendorMap_Data_Maelstrom
+  VendorMap/packs/VendorMap_Data_Northrend: VendorMap_Data_Northrend
+  VendorMap/packs/VendorMap_Data_Other: VendorMap_Data_Other
+  VendorMap/packs/VendorMap_Data_Outland: VendorMap_Data_Outland
+  VendorMap/packs/VendorMap_Data_Pandaria: VendorMap_Data_Pandaria
+  VendorMap/packs/VendorMap_Data_Shadowlands: VendorMap_Data_Shadowlands
+  VendorMap/packs/VendorMap_Data_Zandalar: VendorMap_Data_Zandalar

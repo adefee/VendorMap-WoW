@@ -1,0 +1,40 @@
+## Interface: 120007, 120100
+## Title: VendorMap
+## Notes: Shows vendor, repair, barber, and utility NPC locations on the world map with filters. No HandyNotes required.
+## Author: VendorMap
+## Version: 0.6.2
+## SavedVariables: VendorMapDB, VendorMapLearnedDB, VendorMapOverridesDB
+## OptionalDeps: TomTom, WaypointUI
+## IconTexture: Interface\Minimap\Tracking\Repair
+## AddonCompartmentFunc: VendorMap_OnAddonCompartmentClick
+## X-Category: Map
+## X-Curse-Project-ID: 000000
+
+Libs\LibStub\LibStub.lua
+Libs\Krowi_WorldMapButtons-1.4\Krowi_WorldMapButtons-1.4.lua
+Constants.lua
+IconPresets.lua
+IconPicker.lua
+Names.lua
+Database.lua
+DataPacks.lua
+Data\Seed.lua
+Data\Seed_Capitals.lua
+Data\Seed_Hubs.lua
+Data\Seed_Decor.lua
+Waypoints.lua
+Learn.lua
+VendorEdit.lua
+Export.lua
+Pins.lua
+Overlap.lua
+Minimap.lua
+CanvasPins.lua
+WorldMapButton.xml
+FilterButton.lua
+SettingsUI.lua
+Settings_Basic.lua
+Settings_Vendors.lua
+Settings_Data.lua
+Settings.lua
+VendorMap.lua

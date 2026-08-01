@@ -1,0 +1,54 @@
+name: Submit learned vendors
+description: Share vendors VendorMap learned so we can add them to the shared database.
+title: "[data] Vendor submission"
+labels: ["vendor-data"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping grow the VendorMap database!
+
+        In game, run `/vm export` (or **Settings → Data Management → Export**), then paste
+        the exported `A{ ... }` block below. A maintainer will merge it into the right pack.
+  - type: textarea
+    id: export
+    attributes:
+      label: Exported vendor data
+      description: Paste the full export block (the lines starting with `A{ ... }`).
+      render: lua
+      placeholder: |
+        local _, ns = ...
+        local A = ns.AddSeed
+
+        A{ name="Innkeeper Allison", npcID=6740, mapID=87, x=0.6600, y=0.6900, faction="Alliance", types={innkeeper=true}, note="" }
+    validations:
+      required: true
+  - type: input
+    id: game-version
+    attributes:
+      label: Game version (optional)
+      description: e.g. Retail 12.0.7
+      placeholder: Retail 12.0.7
+    validations:
+      required: false
+  - type: dropdown
+    id: faction
+    attributes:
+      label: Character faction (optional)
+      description: Helps us sanity-check faction-restricted vendors.
+      options:
+        - Not specified
+        - Alliance
+        - Horde
+        - Neutral
+    validations:
+      required: false
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmation
+      options:
+        - label: This data came from `/vm export` or the Data Management export UI.
+          required: true
+        - label: I understand only vendor coordinates/types are needed (no other SavedVariables).
+          required: true

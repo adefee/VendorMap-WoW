@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<Ui xmlns="http://www.blizzard.com/wow/ui/"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.blizzard.com/wow/ui/..\FrameXML\UI.xsd">
+
+	<Script file="WorldMapButton.lua" />
+
+	<!-- Circular icon matching Blizzard / RareScanner world-map buttons -->
+	<DropdownButton name="VendorMapWorldMapButtonTemplate" frameStrata="HIGH" mixin="VendorMapWorldMapButtonMixin" virtual="true">
+		<Size x="32" y="32" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="Background" file="Interface\Minimap\UI-Minimap-Background">
+					<Size x="25" y="25"/>
+					<Anchors>
+						<Anchor point="TOPLEFT" x="2" y="-4"/>
+					</Anchors>
+					<Color r="0.12" g="0.28" b="0.48" a="1"/>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<!-- Pressed offset target for WowStyle2 / RareScanner parity -->
+				<Texture parentKey="Icon" file="Interface\Minimap\Tracking\Repair">
+					<Size x="20" y="20" />
+					<Anchors>
+						<Anchor point="TOPLEFT" x="7.2" y="-6" />
+					</Anchors>
+					<Color r="1" g="1" b="1" a="0"/>
+				</Texture>
+				<!-- Offset matches the circular hole (bg is inset TOPLEFT 2,-4); +1.5 X centers the glyph -->
+				<FontString parentKey="Letter" inherits="GameFontNormalLarge" text="V">
+					<Anchors>
+						<Anchor point="CENTER" x="1.5" y="-1"/>
+					</Anchors>
+					<Color r="0.95" g="0.98" b="1"/>
+				</FontString>
+			</Layer>
+			<Layer level="OVERLAY" textureSubLevel="1">
+				<Texture parentKey="Border" file="Interface\Minimap\MiniMap-TrackingBorder">
+					<Size x="54" y="54"/>
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight" />
+		<Scripts>
+			<OnLoad method="OnLoad" />
+			<OnShow method="OnShow" />
+			<OnMouseDown method="OnMouseDown" />
+			<OnMouseUp method="OnMouseUp" />
+			<OnEnter method="OnEnter" />
+			<OnLeave method="OnLeave" />
+		</Scripts>
+	</DropdownButton>
+
+</Ui>

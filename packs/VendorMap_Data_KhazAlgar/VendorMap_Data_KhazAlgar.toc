@@ -1,0 +1,10 @@
+## Interface: 120007, 120100
+## Title: VendorMap Data: Khaz Algar
+## Notes: LoadOnDemand vendor coordinates for Khaz Algar. Requires VendorMap.
+## Author: VendorMap
+## Version: 0.6.2
+## LoadOnDemand: 1
+## Dependencies: VendorMap
+## X-Category: Map
+
+Seeds.lua

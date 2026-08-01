@@ -1,0 +1,10 @@
+## Interface: 120007, 120100
+## Title: VendorMap Data: Northrend
+## Notes: LoadOnDemand vendor coordinates for Northrend. Requires VendorMap.
+## Author: VendorMap
+## Version: 0.6.2
+## LoadOnDemand: 1
+## Dependencies: VendorMap
+## X-Category: Map
+
+Seeds.lua
