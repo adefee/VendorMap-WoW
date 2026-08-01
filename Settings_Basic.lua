@@ -39,6 +39,9 @@ function ns.BuildBasicSettingsPage(frame)
         return ns.GetDB().enabled
     end, function(v)
         ns.GetDB().enabled = v
+        if ns.FilterButton then
+            ns.FilterButton:UpdateVisibility()
+        end
     end)
 
     y = y - 32

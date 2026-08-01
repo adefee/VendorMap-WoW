@@ -377,11 +377,22 @@ function ns.SetVendorOverride(key, override)
     end)
 end
 
-local function CollectTypesFromUI()
+local function CollectTypesFromUI(existing)
+    -- Start from current types so keys the dialog does not render (e.g. legacy
+    -- subtype keys) are preserved; then apply checkbox state for top-level types.
     local types = {}
+    if type(existing) == "table" then
+        for key, val in pairs(existing) do
+            if val then
+                types[key] = true
+            end
+        end
+    end
     for key, cb in pairs(typeChecks) do
         if cb:GetChecked() then
             types[key] = true
+        else
+            types[key] = nil
         end
     end
     return types
@@ -875,8 +886,9 @@ local function BuildFrame()
         if type(displayName) ~= "string" or displayName == "" then
             displayName = "Vendor"
         end
+        local existingTypes = editing and editing.types
         local override = {
-            types = CollectTypesFromUI(),
+            types = CollectTypesFromUI(existingTypes),
             faction = selectedFaction,
             note = noteText,
             subtitle = subtitleText,

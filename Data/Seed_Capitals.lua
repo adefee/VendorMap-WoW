@@ -9,7 +9,7 @@ local A = ns.AddSeed
 ---------------------------------------------------------------------------
 A{ name = "Barber Shop", mapID = 84, x = 0.618, y = 0.652, faction = "Alliance", types = { barber = true }, note = "Trade District" }
 A{ name = "Innkeeper Allison", npcID = 6740, mapID = 84, x = 0.606, y = 0.751, faction = "Alliance", types = { innkeeper = true, food = true } }
-A{ name = "Thurman Mullby", npcID = 1287, mapID = 84, x = 0.644, y = 0.715, faction = "Alliance", types = { general = true } }
+A{ name = "Thurman Mullby", npcID = 1285, mapID = 84, x = 0.644, y = 0.715, faction = "Alliance", types = { general = true } }
 A{ name = "Edna Mullby", npcID = 1286, mapID = 84, x = 0.647, y = 0.712, faction = "Alliance", types = { general = true } }
 A{ name = "Gunther Weller", npcID = 1289, mapID = 84, x = 0.642, y = 0.688, faction = "Alliance", types = { repair = true } }
 A{ name = "Marda Weller", npcID = 1287, mapID = 84, x = 0.572, y = 0.570, faction = "Alliance", types = { repair = true } }
@@ -22,11 +22,11 @@ A{ name = "Rachelle Byzanti", mapID = 84, x = 0.642, y = 0.722, faction = "Allia
 A{ name = "Jenova Stoneshield", npcID = 11069, mapID = 84, x = 0.712, y = 0.622, faction = "Alliance", types = { stable = true } }
 A{ name = "Unger Statforth", npcID = 11068, mapID = 84, x = 0.772, y = 0.668, faction = "Alliance", types = { mounts = true } }
 A{ name = "Randal Hunter", npcID = 4732, mapID = 84, x = 0.774, y = 0.676, faction = "Alliance", types = { mounts = true } }
-A{ name = "Maria Lumere", npcID = 1257, mapID = 84, x = 0.558, y = 0.854, faction = "Alliance", types = { reagents = true, profession = true }, note = "Mage Quarter reagents" }
+A{ name = "Maria Lumere", npcID = 1313, mapID = 84, x = 0.558, y = 0.854, faction = "Alliance", types = { reagents = true, profession = true }, note = "Mage Quarter reagents" }
 A{ name = "Charys Yserian", npcID = 1307, mapID = 84, x = 0.324, y = 0.800, faction = "Alliance", types = { reagents = true } }
 A{ name = "Adair Gilroy", npcID = 1316, mapID = 84, x = 0.416, y = 0.652, faction = "Alliance", types = { profession = true }, note = "Enchanting supplies" }
 A{ name = "Jessara Cordell", npcID = 1318, mapID = 84, x = 0.529, y = 0.743, faction = "Alliance", types = { profession = true } }
-A{ name = "Duncan Cullen", npcID = 1286, mapID = 84, x = 0.644, y = 0.684, faction = "Alliance", types = { repair = true } }
+A{ name = "Duncan Cullen", npcID = 1314, mapID = 84, x = 0.644, y = 0.684, faction = "Alliance", types = { repair = true } }
 A{ name = "Billibub Cogspinner", npcID = 5519, mapID = 84, x = 0.630, y = 0.316, faction = "Alliance", types = { profession = true }, note = "Engineering supplies" }
 A{ name = "Auctioneer", mapID = 84, x = 0.612, y = 0.704, faction = "Alliance", types = { general = true }, note = "AH — Trade District" }
 A{ name = "Bank of Stormwind", mapID = 84, x = 0.628, y = 0.780, faction = "Alliance", types = { banker = true }, note = "Trade District bank" }
@@ -37,7 +37,7 @@ A{ name = "Bank of Stormwind", mapID = 84, x = 0.628, y = 0.780, faction = "Alli
 A{ name = "Barber Shop", mapID = 85, x = 0.402, y = 0.606, faction = "Horde", types = { barber = true }, note = "The Drag" }
 A{ name = "Innkeeper Gryshka", npcID = 6929, mapID = 85, x = 0.536, y = 0.787, faction = "Horde", types = { innkeeper = true, food = true } }
 A{ name = "Koma", npcID = 3362, mapID = 85, x = 0.468, y = 0.732, faction = "Horde", types = { general = true } }
-A{ name = "Soran", npcID = 3364, mapID = 85, x = 0.462, y = 0.746, faction = "Horde", types = { repair = true } }
+A{ name = "Soran", npcID = 3320, mapID = 85, x = 0.462, y = 0.746, faction = "Horde", types = { repair = true } }
 A{ name = "Horthus", npcID = 3323, mapID = 85, x = 0.458, y = 0.456, faction = "Horde", types = { reagents = true } }
 A{ name = "Hagrus", npcID = 3335, mapID = 85, x = 0.460, y = 0.459, faction = "Horde", types = { reagents = true } }
 A{ name = "Asoran", npcID = 3350, mapID = 85, x = 0.464, y = 0.458, faction = "Horde", types = { reagents = true } }

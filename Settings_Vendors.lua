@@ -2,7 +2,8 @@ local _, ns = ...
 
 local UI = ns.SettingsUI
 
-local typeRows = {} -- [typeKey] = row
+-- One typeRows table per vendors-settings canvas (standalone + Blizzard Settings).
+local vendorPageStates = {}
 
 local function NestedForParent(parentKey)
     if ns.NestedTypesForParent then
@@ -51,7 +52,7 @@ local function UpdateCustomVisibility(row, typeKey)
     SyncPreview(row, typeKey)
 end
 
-local function RelayoutTypeRows()
+local function RelayoutTypeRows(typeRows)
     local y = typeRows._startY or -120
     local order = typeRows._order or {}
     for _, key in ipairs(order) do
@@ -88,7 +89,7 @@ local function RelayoutTypeRows()
     end
 end
 
-local function RefreshTypeRowsEnabled()
+local function RefreshTypeRowsEnabled(typeRows)
     local db = ns.GetDB()
     for key, row in pairs(typeRows) do
         if type(row) == "table" and row.cb then
@@ -110,14 +111,16 @@ local function RefreshTypeRowsEnabled()
             UpdateCustomVisibility(row, key)
         end
     end
-    RelayoutTypeRows()
+    RelayoutTypeRows(typeRows)
 end
 
 function ns.RefreshVendorSettingsRows()
-    RefreshTypeRowsEnabled()
+    for _, typeRows in ipairs(vendorPageStates) do
+        RefreshTypeRowsEnabled(typeRows)
+    end
 end
 
-local function CreateTypeIconControls(content, typeKey, labelText, y, parentKey)
+local function CreateTypeIconControls(content, typeRows, typeKey, labelText, y, parentKey)
     local cb = UI.CreateCheckbox(content, labelText, 16, y, function()
         return ns.GetDB().types[typeKey]
     end, function(v)
@@ -131,7 +134,7 @@ local function CreateTypeIconControls(content, typeKey, labelText, y, parentKey)
         if parentKey == nil and ns.RefreshSettingsWidgets then
             ns.RefreshSettingsWidgets()
         else
-            RefreshTypeRowsEnabled()
+            ns.RefreshVendorSettingsRows()
         end
     end)
     cb.Text:SetWidth(120)
@@ -178,7 +181,7 @@ local function CreateTypeIconControls(content, typeKey, labelText, y, parentKey)
                 ns.SetTypeIconCustomPath(typeKey, tostring(icon))
             end
             UpdateCustomVisibility(typeRows[typeKey], typeKey)
-            RelayoutTypeRows()
+            RelayoutTypeRows(typeRows)
             ns.RefreshAll()
         end, current ~= "" and current or nil)
     end)
@@ -195,7 +198,7 @@ local function CreateTypeIconControls(content, typeKey, labelText, y, parentKey)
             ns.SetTypeIconPreset(typeKey, "custom")
         end
         UpdateCustomVisibility(typeRows[typeKey], typeKey)
-        RelayoutTypeRows()
+        RelayoutTypeRows(typeRows)
         ns.RefreshAll()
     end)
     modeBtn._refresh = function()
@@ -214,7 +217,7 @@ local function CreateTypeIconControls(content, typeKey, labelText, y, parentKey)
             ns.SetTypeIconCustomPath(typeKey, "")
         end
         UpdateCustomVisibility(typeRows[typeKey], typeKey)
-        RelayoutTypeRows()
+        RelayoutTypeRows(typeRows)
         ns.RefreshAll()
     end)
 
@@ -262,7 +265,8 @@ local function CreateTypeIconControls(content, typeKey, labelText, y, parentKey)
 end
 
 function ns.BuildVendorsSettingsPage(frame)
-    wipe(typeRows)
+    local typeRows = {}
+    vendorPageStates[#vendorPageStates + 1] = typeRows
     local content = frame.content
     UI.EnsureTypeIconScale()
 
@@ -310,15 +314,15 @@ function ns.BuildVendorsSettingsPage(frame)
 
     for _, t in ipairs(ns.VENDOR_TYPES) do
         typeRows._order[#typeRows._order + 1] = t.key
-        CreateTypeIconControls(content, t.key, t.label, y)
+        CreateTypeIconControls(content, typeRows, t.key, t.label, y)
         y = y - 52
 
         for _, nested in ipairs(NestedForParent(t.key)) do
             typeRows._order[#typeRows._order + 1] = nested.key
-            CreateTypeIconControls(content, nested.key, nested.label, y, t.key)
+            CreateTypeIconControls(content, typeRows, nested.key, nested.label, y, t.key)
             y = y - 52
         end
     end
 
-    RelayoutTypeRows()
+    RelayoutTypeRows(typeRows)
 end

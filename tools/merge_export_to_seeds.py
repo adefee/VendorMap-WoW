@@ -6,8 +6,10 @@ Usage:
   # or paste via stdin:
   python3 tools/merge_export_to_seeds.py -
 
-Reads A{ ... } lines, upserts by (npcID, mapID) into VendorMap_Data_* packs
-using the same continent packing as extract_att_vendors.py.
+Reads A{ ... } lines, upserts by (npcID, mapID, rounded x, rounded y) into
+VendorMap_Data_* packs using the same continent packing as extract_att_vendors.py.
+Replace-by-npcID (drop siblings on the same map) only when the incoming set has
+exactly one row for that vendor/map, or when --replace is passed.
 
 Preserves the current seed/export data model:
   name, npcID, mapID, x, y, faction, types, repFactionID, minStanding,
@@ -190,19 +192,40 @@ def load_pack_vendors(pack_dir: Path) -> list[dict]:
     return parse_export(text)
 
 
-def upsert(existing: list[dict], incoming: list[dict]) -> list[dict]:
+def upsert(
+    existing: list[dict],
+    incoming: list[dict],
+    *,
+    replace: bool = False,
+) -> list[dict]:
+    """Merge by (npcID, mapID, rounded x, rounded y).
+
+    When replace is True, or the incoming set has exactly one row for a given
+    (npcID, mapID), drop existing siblings on that vendor/map before inserting.
+    Otherwise retain all distinct coordinate locations.
+    """
+    from collections import Counter
+
+    incoming_counts: Counter[tuple] = Counter()
+    for v in incoming:
+        npc = v.get("npcID")
+        if npc is not None:
+            incoming_counts[(npc, v["mapID"])] += 1
+
     by_key: dict[tuple, dict] = {}
     for v in existing:
         key = (v.get("npcID"), v["mapID"], round(v["x"], 4), round(v["y"], 4))
         by_key[key] = v
     for v in incoming:
         key = (v.get("npcID"), v["mapID"], round(v["x"], 4), round(v["y"], 4))
-        # Prefer npcID+mapID match for location updates
-        if v.get("npcID"):
+        npc = v.get("npcID")
+        if npc is not None and (
+            replace or incoming_counts[(npc, v["mapID"])] == 1
+        ):
             for k in list(by_key):
-                if k[0] == v["npcID"] and k[1] == v["mapID"]:
+                if k[0] == npc and k[1] == v["mapID"]:
                     del by_key[k]
-            by_key[(v["npcID"], v["mapID"], round(v["x"], 4), round(v["y"], 4))] = v
+            by_key[key] = v
         else:
             by_key[key] = v
     out = list(by_key.values())
@@ -210,7 +233,7 @@ def upsert(existing: list[dict], incoming: list[dict]) -> list[dict]:
     return out
 
 
-def merge_vendors(incoming: list[dict]) -> int:
+def merge_vendors(incoming: list[dict], *, replace: bool = False) -> int:
     """Upsert vendor dicts into packs/VendorMap_Data_*. Returns 0 on success."""
     if not incoming:
         print("No vendors to merge.", file=sys.stderr)
@@ -234,7 +257,7 @@ def merge_vendors(incoming: list[dict]) -> int:
         existing: list[dict] = []
         if addon.is_dir():
             existing = load_pack_vendors(addon)
-        merged = upsert(existing, rows)
+        merged = upsert(existing, rows, replace=replace)
         for v in merged:
             if v.get("npcID") and v.get("name"):
                 names[v["npcID"]] = v["name"]
@@ -248,6 +271,11 @@ def merge_vendors(incoming: list[dict]) -> int:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("export_file", help="Path to export.lua, or - for stdin")
+    ap.add_argument(
+        "--replace",
+        action="store_true",
+        help="Replace all existing rows for each incoming npcID+mapID (drop siblings)",
+    )
     args = ap.parse_args()
 
     if args.export_file == "-":
@@ -260,7 +288,7 @@ def main() -> int:
         print("No A{...} vendors found in export.", file=sys.stderr)
         return 1
 
-    return merge_vendors(incoming)
+    return merge_vendors(incoming, replace=args.replace)
 
 
 if __name__ == "__main__":

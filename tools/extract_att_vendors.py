@@ -51,8 +51,11 @@ CHUNK = 450
 WAGO_CREATURE_URL = "https://wago.tools/db2/Creature/csv?locale=enUS"
 WAGO_UIMAP_URL = "https://wago.tools/db2/UiMap/csv?locale=enUS"
 WOWHEAD_NPC_URL = "https://nether.wowhead.com/tooltip/npc/{npc_id}"
-UA = "VendorMap-extract/1.0 (local seed bake; +https://github.com/)"
+UA = "VendorMap-extract/1.0 (local seed bake; +https://github.com/adefee/VendorMap-WoW/issues/new)"
 INTERFACE_VERSION = "120007, 120100"
+_DEPRECATED_NAME = re.compile(r"^\[Deprecated for 4\.x\]\s*", re.I)
+_COLOR_ESCAPE = re.compile(r"\|c[0-9A-Fa-f]{8}|\|r", re.I)
+NOTE_DESC_LIMIT = 120
 ADDON_VERSION = "0.6.4"
 
 # Primary continent mapID → pack key (nested continents aliased in CONTINENT_ALIASES).
@@ -405,34 +408,63 @@ def extract_file(path: Path) -> list[dict]:
                     if mm:
                         rep_faction_id, min_standing = int(mm.group(1)), int(mm.group(2))
 
-            desc_clean = None
-            if desc:
-                desc_clean = desc.replace("\\n", " ").replace('\\"', '"')[:120]
+            desc_clean = clean_desc_note(desc) if desc else None
             types = infer_vendor_types(npc_body, desc_clean, rep_faction_id)
 
             note_parts = ["ATT"]
             if desc_clean:
                 note_parts.append(desc_clean)
+            note = " — ".join(note_parts)
 
             for map_id, x, y in coords:
-                vendors.append(
-                    {
-                        "npcID": npc_id,
-                        "mapID": map_id,
-                        "x": x,
-                        "y": y,
-                        "faction": faction,
-                        "types": types,
-                        "repFactionID": rep_faction_id,
-                        "minStanding": min_standing,
-                        "note": " — ".join(note_parts),
-                    }
-                )
+                row = {
+                    "npcID": npc_id,
+                    "mapID": map_id,
+                    "x": x,
+                    "y": y,
+                    "faction": faction,
+                    "types": types,
+                    "repFactionID": rep_faction_id,
+                    "minStanding": min_standing,
+                }
+                if desc_clean or note == "ATT":
+                    row["note"] = note
+                vendors.append(row)
     return vendors
 
 
 def lua_escape(s: str) -> str:
     return s.replace("\\", "\\\\").replace('"', '\\"')
+
+
+def strip_deprecated_prefix(name: str) -> tuple[str, bool]:
+    """Return (cleaned_name, was_deprecated)."""
+    raw = name.strip()
+    if _DEPRECATED_NAME.match(raw):
+        return _DEPRECATED_NAME.sub("", raw).strip(), True
+    return raw, False
+
+
+def clean_npc_name(name: str) -> str:
+    cleaned, _ = strip_deprecated_prefix(name)
+    return cleaned
+
+
+def clean_desc_note(desc: str, limit: int = NOTE_DESC_LIMIT) -> str | None:
+    """Strip WoW colour escapes, then fit within limit at a word boundary."""
+    text = desc.replace("\\n", " ").replace('\\"', '"')
+    text = _COLOR_ESCAPE.sub("", text)
+    text = " ".join(text.split())
+    if not text:
+        return None
+    if len(text) <= limit:
+        return text
+    cut = text[: max(limit - 1, 0)]
+    if " " in cut:
+        cut = cut.rsplit(" ", 1)[0]
+    if not cut:
+        return None
+    return cut + "…"
 
 
 def http_get(url: str, timeout: float = 60.0) -> bytes:
@@ -478,8 +510,10 @@ def ensure_wago_creature_csv(force: bool = False) -> Path | None:
         return WAGO_CREATURE_CSV if WAGO_CREATURE_CSV.is_file() else None
 
 
-def names_from_wago_csv(path: Path) -> dict[int, str]:
+def names_from_wago_csv(path: Path) -> tuple[dict[int, str], set[int]]:
+    """Return (id→cleaned name, deprecated ids)."""
     out: dict[int, str] = {}
+    deprecated: set[int] = set()
     with path.open(newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
@@ -488,33 +522,65 @@ def names_from_wago_csv(path: Path) -> dict[int, str]:
             except (KeyError, TypeError, ValueError):
                 continue
             name = (row.get("Name_lang") or "").strip().strip('"')
-            if name:
-                out[nid] = name
-    return out
+            if not name:
+                continue
+            cleaned, was_dep = strip_deprecated_prefix(name)
+            if was_dep:
+                deprecated.add(nid)
+            if cleaned:
+                out[nid] = cleaned
+    return out, deprecated
 
 
-def wowhead_npc_name(npc_id: int) -> str | None:
+def wowhead_npc_name(npc_id: int) -> tuple[str | None, bool]:
+    """Return (cleaned_name_or_None, was_deprecated)."""
     url = WOWHEAD_NPC_URL.format(npc_id=npc_id)
     try:
         raw = http_get(url, timeout=20)
     except (urllib.error.URLError, TimeoutError, OSError):
-        return None
+        return None, False
     try:
         data = json.loads(raw.decode("utf-8", errors="replace"))
     except json.JSONDecodeError:
-        return None
+        return None, False
     name = data.get("name") if isinstance(data, dict) else None
     if isinstance(name, str):
         name = name.strip()
         if name:
-            return name
-    return None
+            cleaned, was_dep = strip_deprecated_prefix(name)
+            return (cleaned or None), was_dep
+    return None, False
 
 
-def resolve_names(npc_ids: set[int], refresh: bool = False, workers: int = 12) -> dict[int, str]:
-    """Bake npcID → name via cache, wago CSV, then Wowhead for gaps."""
+def resolve_names(
+    npc_ids: set[int], refresh: bool = False, workers: int = 12
+) -> tuple[dict[int, str], set[int]]:
+    """Bake npcID → name via cache, wago CSV, then Wowhead for gaps.
+
+    Returns (resolved_names, deprecated_npc_ids). Cache values are cleaned of
+    the '[Deprecated for 4.x]' prefix; deprecated IDs are still reported so
+    callers can skip emitting those vendors.
+    """
     cache = {} if refresh else load_name_cache()
     resolved: dict[int, str] = {}
+    deprecated: set[int] = set()
+
+    # Normalize any stale deprecated prefixes already in cache.
+    dirty_cache = False
+    for key, val in list(cache.items()):
+        if not isinstance(val, str):
+            continue
+        cleaned, was_dep = strip_deprecated_prefix(val)
+        if was_dep:
+            try:
+                deprecated.add(int(key))
+            except ValueError:
+                pass
+            dirty_cache = True
+        if cleaned != val:
+            cache[key] = cleaned
+            dirty_cache = True
+
     for nid in npc_ids:
         cached = cache.get(str(nid))
         if cached:
@@ -525,7 +591,8 @@ def resolve_names(npc_ids: set[int], refresh: bool = False, workers: int = 12) -
 
     csv_path = ensure_wago_creature_csv(force=refresh)
     if csv_path and missing:
-        wago = names_from_wago_csv(csv_path)
+        wago, wago_dep = names_from_wago_csv(csv_path)
+        deprecated |= wago_dep
         filled = 0
         for nid in list(missing):
             if nid in wago:
@@ -544,10 +611,13 @@ def resolve_names(npc_ids: set[int], refresh: bool = False, workers: int = 12) -
             for fut in as_completed(futures):
                 nid = futures[fut]
                 name = None
+                was_dep = False
                 try:
-                    name = fut.result()
+                    name, was_dep = fut.result()
                 except Exception:
                     name = None
+                if was_dep:
+                    deprecated.add(nid)
                 if name:
                     resolved[nid] = name
                     cache[str(nid)] = name
@@ -557,13 +627,13 @@ def resolve_names(npc_ids: set[int], refresh: bool = False, workers: int = 12) -
                 if done % 100 == 0 or done == len(futures):
                     print(f"    Wowhead {done}/{len(futures)} (fail={failed})")
                     save_name_cache(cache)
-                # light politeness — pool already limits concurrency
                 if done % 50 == 0:
                     time.sleep(0.05)
 
-    save_name_cache(cache)
-    print(f"Names resolved: {len(resolved)}/{len(npc_ids)}")
-    return resolved
+    if dirty_cache or resolved:
+        save_name_cache(cache)
+    print(f"Names resolved: {len(resolved)}/{len(npc_ids)} (deprecated={len(deprecated)})")
+    return resolved, deprecated
 
 
 def ensure_uimap_csv(force: bool = False) -> Path | None:
@@ -610,7 +680,10 @@ def primary_continent_id(map_id: int, uimap: dict[int, dict[str, str]]) -> int |
     if not continents:
         return None
     for cont in continents:
-        parent = int(uimap[cont].get("ParentUiMapID") or 0)
+        try:
+            parent = int(uimap[cont].get("ParentUiMapID") or 0)
+        except ValueError:
+            return cont
         prow = uimap.get(parent)
         if not prow or prow.get("Type") != "2":
             return cont
@@ -718,7 +791,16 @@ def write_data_pack(pack_key: str, vendors: list[dict], names: dict[int, str]) -
     return pack_dir
 
 
-def emit_packs(vendors: list[dict], names: dict[int, str], uimap: dict[int, dict[str, str]]) -> None:
+def emit_packs(
+    vendors: list[dict],
+    names: dict[int, str],
+    uimap: dict[int, dict[str, str]],
+    *,
+    prune: bool = False,
+) -> None:
+    # Lazy import avoids circular import with merge_export_to_seeds.
+    from merge_export_to_seeds import load_pack_vendors, upsert
+
     seen = set()
     unique: list[dict] = []
     for v in vendors:
@@ -733,28 +815,47 @@ def emit_packs(vendors: list[dict], names: dict[int, str], uimap: dict[int, dict
     for v in unique:
         by_pack[pack_for_map(v["mapID"], uimap)].append(v)
 
-    # Remove legacy in-core ATT dumps
-    for old in CORE_DATA_DIR.glob("Seed_ATT*.lua"):
-        old.unlink()
-        print(f"Removed legacy {old.name}")
-
-    # Remove stale data addons we manage
-    if PACKS_DIR.exists():
-        for path in PACKS_DIR.glob("VendorMap_Data_*"):
-            if path.is_dir():
-                shutil.rmtree(path)
+    if prune:
+        for old in CORE_DATA_DIR.glob("Seed_ATT*.lua"):
+            old.unlink()
+            print(f"Removed legacy {old}")
+        if PACKS_DIR.exists():
+            for path in sorted(PACKS_DIR.glob("VendorMap_Data_*")):
+                if path.is_dir():
+                    shutil.rmtree(path)
+                    print(f"Removed pack {path}")
+    else:
+        print("Preserving existing pack rows (pass --prune to wipe managed packs).")
 
     print(f"Seed rows with baked names: {sum(1 for v in unique if names.get(v['npcID']))}/{len(unique)}")
+    written: set[str] = set()
     for pack_key in sorted(by_pack.keys(), key=lambda k: (-len(by_pack[k]), k)):
         rows = by_pack[pack_key]
+        if not prune:
+            addon = PACKS_DIR / f"VendorMap_Data_{pack_key}"
+            if addon.is_dir():
+                existing = load_pack_vendors(addon)
+                # Bake ATT names onto rows lacking name before merge.
+                for v in rows:
+                    if not v.get("name") and names.get(v.get("npcID")):
+                        v["name"] = names[v["npcID"]]
+                rows = upsert(existing, rows, replace=False)
         dest = write_data_pack(pack_key, rows, names)
+        written.add(pack_key)
         print(f"  {pack_key:18s} {len(rows):4d} vendors → {dest.name}")
 
-    # Ensure empty Other pack exists if somehow unused (always ship all known packs? optional)
     for pack_key in PACK_LABELS:
-        if pack_key not in by_pack:
-            write_data_pack(pack_key, [], names)
-            print(f"  {pack_key:18s}    0 vendors → VendorMap_Data_{pack_key} (empty)")
+        if pack_key in written:
+            continue
+        addon = PACKS_DIR / f"VendorMap_Data_{pack_key}"
+        if not prune and addon.is_dir():
+            # Keep community/hand-merged rows; rewrite pack in place from existing.
+            existing = load_pack_vendors(addon)
+            dest = write_data_pack(pack_key, existing, names)
+            print(f"  {pack_key:18s} {len(existing):4d} vendors → {dest.name} (preserved)")
+        else:
+            dest = write_data_pack(pack_key, [], names)
+            print(f"  {pack_key:18s}    0 vendors → {dest.name} (empty)")
 
 
 def main() -> int:
@@ -768,6 +869,11 @@ def main() -> int:
         "--refresh-uimap",
         action="store_true",
         help="Re-download wago UiMap CSV used for continent packing",
+    )
+    parser.add_argument(
+        "--prune",
+        action="store_true",
+        help="Delete managed VendorMap_Data_* packs and legacy Seed_ATT*.lua before writing",
     )
     parser.add_argument("--workers", type=int, default=12, help="Wowhead fetch concurrency")
     args = parser.parse_args()
@@ -790,8 +896,12 @@ def main() -> int:
             all_v.extend(got)
 
     npc_ids = {v["npcID"] for v in all_v if v.get("npcID")}
-    names = resolve_names(npc_ids, refresh=args.refresh_names, workers=args.workers)
-    emit_packs(all_v, names, uimap)
+    names, deprecated = resolve_names(npc_ids, refresh=args.refresh_names, workers=args.workers)
+    if deprecated:
+        before = len(all_v)
+        all_v = [v for v in all_v if v.get("npcID") not in deprecated]
+        print(f"Skipped {before - len(all_v)} deprecated vendor rows ({len(deprecated)} npcIDs)")
+    emit_packs(all_v, names, uimap, prune=args.prune)
     print("Done. Packs written to packs/. Run tools/link_packs.sh to test locally.")
     return 0
 

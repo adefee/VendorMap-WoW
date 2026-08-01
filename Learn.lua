@@ -295,10 +295,11 @@ local function DetectMerchantTypes(subtitle)
                 end
             end
 
+            local isReagent = false
             if classID == Enum.ItemClass.Consumable and subClassID == foodDrinkSub then
                 foodCount = foodCount + 1
             elseif classID == Enum.ItemClass.Reagent then
-                reagentCount = reagentCount + 1
+                isReagent = true
             elseif classID == Enum.ItemClass.Tradegoods then
                 if subClassID == TRADEGOODS_COOKING then
                     -- Cooking tradegoods (raw meat/fish) are food ingredients, not a
@@ -306,7 +307,7 @@ local function DetectMerchantTypes(subtitle)
                     -- trainer vendors are caught by subtitle/name and by Recipe items.
                     foodCount = foodCount + 1
                 else
-                    reagentCount = reagentCount + 1
+                    isReagent = true
                 end
             elseif classID == Enum.ItemClass.Recipe then
                 professionCount = professionCount + 1
@@ -326,7 +327,7 @@ local function DetectMerchantTypes(subtitle)
             end
 
             if isCraftingReagent then
-                reagentCount = reagentCount + 1
+                isReagent = true
             end
 
             local sub = SafeLower(itemSubType)
@@ -336,7 +337,7 @@ local function DetectMerchantTypes(subtitle)
                 elseif sub:find("poison", 1, true) then
                     types.poison = true
                 elseif sub:find("reagent", 1, true) then
-                    reagentCount = reagentCount + 1
+                    isReagent = true
                 end
             end
             local nameLower = SafeLower(itemName)
@@ -345,6 +346,9 @@ local function DetectMerchantTypes(subtitle)
             end
             local typeLower = SafeLower(itemType)
             if typeLower and typeLower:find("reagent", 1, true) then
+                isReagent = true
+            end
+            if isReagent then
                 reagentCount = reagentCount + 1
             end
         end

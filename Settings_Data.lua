@@ -2,11 +2,9 @@ local _, ns = ...
 
 local UI = ns.SettingsUI
 
-local overrideRows = {}
-local listContent
-local listScroll
+-- One pool/state per data-settings canvas (standalone + Blizzard Settings).
+local dataPageStates = {}
 local expandedNpc
-local statsLabel
 
 local function CountLearned()
     if type(VendorMapLearnedDB) ~= "table" then
@@ -77,35 +75,26 @@ local function TypesSummary(ov, vendor)
     return "—"
 end
 
-local function RefreshStats()
-    if not statsLabel then
-        return
-    end
-    statsLabel:SetText(string.format(
+local function StatsText()
+    return string.format(
         "Learned visits: %d    Overrides: %d    Indexed vendors: %d",
         CountLearned(),
         CountOverrides(),
         (ns.Database and ns.Database:Count()) or 0
-    ))
+    )
 end
 
-local function ClearOverrideList()
-    for _, row in ipairs(overrideRows) do
-        row:Hide()
-        row:SetParent(nil)
+local function RefreshStats()
+    for _, state in ipairs(dataPageStates) do
+        if state.statsLabel then
+            state.statsLabel:SetText(StatsText())
+        end
     end
-    wipe(overrideRows)
 end
 
-local function BuildOverrideRow(parent, entry, y)
-    local collapsedH = 28
-    local expandedH = 112
-    local isExpanded = expandedNpc == entry.npcID
-    local height = isExpanded and expandedH or collapsedH
-
+local function EnsureOverrideRow(parent)
     local row = CreateFrame("Button", nil, parent, "BackdropTemplate")
-    row:SetSize(560, height)
-    row:SetPoint("TOPLEFT", 0, y)
+    row:SetSize(560, 28)
     if row.SetBackdrop then
         row:SetBackdrop({
             bgFile = "Interface\\Buttons\\WHITE8X8",
@@ -119,16 +108,47 @@ local function BuildOverrideRow(parent, entry, y)
         row:SetBackdropBorderColor(0.3, 0.3, 0.35, 1)
     end
 
-    local header = row:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
-    header:SetPoint("TOPLEFT", 10, -6)
-    header:SetWidth(420)
-    header:SetJustifyH("LEFT")
-    local hideMark = entry.ov.hidden and " |cffcc6666(hidden)|r" or ""
-    header:SetText(string.format("%s  |cff888888(%s)|r%s", entry.name, tostring(entry.npcID), hideMark))
+    row.header = row:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+    row.header:SetPoint("TOPLEFT", 10, -6)
+    row.header:SetWidth(420)
+    row.header:SetJustifyH("LEFT")
 
-    local chevron = row:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-    chevron:SetPoint("TOPRIGHT", -10, -6)
-    chevron:SetText(isExpanded and "▼" or "▶")
+    row.chevron = row:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    row.chevron:SetPoint("TOPRIGHT", -10, -6)
+
+    row.detail = row:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
+    row.detail:SetPoint("TOPLEFT", 12, -28)
+    row.detail:SetWidth(420)
+    row.detail:SetJustifyH("LEFT")
+
+    row.editBtn = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
+    row.editBtn:SetSize(70, 22)
+    row.editBtn:SetPoint("BOTTOMRIGHT", -90, 8)
+    row.editBtn:SetText("Edit")
+
+    row.clearBtn = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
+    row.clearBtn:SetSize(70, 22)
+    row.clearBtn:SetPoint("BOTTOMRIGHT", -12, 8)
+    row.clearBtn:SetText("Clear")
+
+    return row
+end
+
+local function UpdateOverrideRow(row, parent, entry, y)
+    local collapsedH = 28
+    local expandedH = 112
+    local isExpanded = expandedNpc == entry.npcID
+    local height = isExpanded and expandedH or collapsedH
+
+    row:SetParent(parent)
+    row:ClearAllPoints()
+    row:SetSize(560, height)
+    row:SetPoint("TOPLEFT", 0, y)
+    row:Show()
+
+    local hideMark = entry.ov.hidden and " |cffcc6666(hidden)|r" or ""
+    row.header:SetText(string.format("%s  |cff888888(%s)|r%s", entry.name, tostring(entry.npcID), hideMark))
+    row.chevron:SetText(isExpanded and "▼" or "▶")
 
     row:SetScript("OnClick", function()
         if expandedNpc == entry.npcID then
@@ -140,10 +160,6 @@ local function BuildOverrideRow(parent, entry, y)
     end)
 
     if isExpanded then
-        local detail = row:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
-        detail:SetPoint("TOPLEFT", 12, -28)
-        detail:SetWidth(420)
-        detail:SetJustifyH("LEFT")
         local note = entry.ov.note
         if note == "" then
             note = "(empty note)"
@@ -158,19 +174,17 @@ local function BuildOverrideRow(parent, entry, y)
         elseif entry.ov.iconCustom and entry.ov.iconCustom ~= "" then
             iconDesc = "Custom: " .. tostring(entry.ov.iconCustom)
         end
-        detail:SetText(string.format(
+        row.detail:SetText(string.format(
             "Faction: %s\nTypes: %s\nIcon: %s\nNote: %s",
             tostring(entry.ov.faction or (entry.vendor and entry.vendor.faction) or "—"),
             TypesSummary(entry.ov, entry.vendor),
             iconDesc,
             note and tostring(note) or "—"
         ))
-
-        local editBtn = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
-        editBtn:SetSize(70, 22)
-        editBtn:SetPoint("BOTTOMRIGHT", -90, 8)
-        editBtn:SetText("Edit")
-        editBtn:SetScript("OnClick", function()
+        row.detail:Show()
+        row.editBtn:Show()
+        row.clearBtn:Show()
+        row.editBtn:SetScript("OnClick", function()
             local info = entry.vendor
             if not info then
                 local key = entry.npcID
@@ -192,12 +206,7 @@ local function BuildOverrideRow(parent, entry, y)
                 ns.OpenVendorEdit(info)
             end
         end)
-
-        local clearBtn = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
-        clearBtn:SetSize(70, 22)
-        clearBtn:SetPoint("BOTTOMRIGHT", -12, 8)
-        clearBtn:SetText("Clear")
-        clearBtn:SetScript("OnClick", function()
+        row.clearBtn:SetScript("OnClick", function()
             if ns.SetVendorOverride then
                 ns.SetVendorOverride(entry.npcID, nil)
             end
@@ -208,40 +217,72 @@ local function BuildOverrideRow(parent, entry, y)
             ns.RefreshOverrideList()
             RefreshStats()
         end)
+    else
+        row.detail:Hide()
+        row.editBtn:Hide()
+        row.clearBtn:Hide()
     end
 
-    overrideRows[#overrideRows + 1] = row
     return height
 end
 
-function ns.RefreshOverrideList()
+local function RefreshOverrideListForState(state)
+    local listContent = state.listContent
     if not listContent then
         return
     end
-    ClearOverrideList()
+    local overrideRows = state.overrideRows
     local entries = CollectOverrideEntries()
     local y = 0
     if #entries == 0 then
-        local holder = CreateFrame("Frame", nil, listContent)
-        holder:SetSize(560, 24)
-        holder:SetPoint("TOPLEFT", 0, 0)
-        local empty = holder:CreateFontString(nil, "ARTWORK", "GameFontDisable")
-        empty:SetPoint("TOPLEFT", 8, -4)
-        empty:SetText("No overrides yet. Right-click a map pin to edit.")
-        overrideRows[1] = holder
+        for _, row in ipairs(overrideRows) do
+            row:Hide()
+        end
+        if not state.emptyHolder then
+            state.emptyHolder = CreateFrame("Frame", nil, listContent)
+            state.emptyHolder:SetSize(560, 24)
+            local empty = state.emptyHolder:CreateFontString(nil, "ARTWORK", "GameFontDisable")
+            empty:SetPoint("TOPLEFT", 8, -4)
+            empty:SetText("No overrides yet. Right-click a map pin to edit.")
+        end
+        state.emptyHolder:SetParent(listContent)
+        state.emptyHolder:ClearAllPoints()
+        state.emptyHolder:SetPoint("TOPLEFT", 0, 0)
+        state.emptyHolder:Show()
         y = -24
     else
-        for _, entry in ipairs(entries) do
-            local h = BuildOverrideRow(listContent, entry, y)
+        if state.emptyHolder then
+            state.emptyHolder:Hide()
+        end
+        for i, entry in ipairs(entries) do
+            local row = overrideRows[i]
+            if not row then
+                row = EnsureOverrideRow(listContent)
+                overrideRows[i] = row
+            end
+            local h = UpdateOverrideRow(row, listContent, entry, y)
             y = y - (h + 4)
+        end
+        for i = #entries + 1, #overrideRows do
+            overrideRows[i]:Hide()
         end
     end
     listContent:SetHeight(math.max(120, math.abs(y) + 16))
+end
+
+function ns.RefreshOverrideList()
+    for _, state in ipairs(dataPageStates) do
+        RefreshOverrideListForState(state)
+    end
     RefreshStats()
 end
 
 function ns.BuildDataSettingsPage(frame)
     local content = frame.content
+    local state = {
+        overrideRows = {},
+    }
+    dataPageStates[#dataPageStates + 1] = state
 
     local title = content:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
     title:SetPoint("TOPLEFT", 16, -8)
@@ -253,11 +294,11 @@ function ns.BuildDataSettingsPage(frame)
     sub:SetJustifyH("LEFT")
     sub:SetText("Export learned/override vendors into seed lines, and browse overrides saved in VendorMapOverridesDB.")
 
-    statsLabel = content:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-    statsLabel:SetPoint("TOPLEFT", 16, -56)
-    statsLabel:SetWidth(580)
-    statsLabel:SetJustifyH("LEFT")
-    RefreshStats()
+    state.statsLabel = content:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    state.statsLabel:SetPoint("TOPLEFT", 16, -56)
+    state.statsLabel:SetWidth(580)
+    state.statsLabel:SetJustifyH("LEFT")
+    state.statsLabel:SetText(StatsText())
 
     local exportBtn = CreateFrame("Button", nil, content, "UIPanelButtonTemplate")
     exportBtn:SetSize(220, 26)
@@ -300,14 +341,14 @@ function ns.BuildDataSettingsPage(frame)
     ovHint:SetJustifyH("LEFT")
     ovHint:SetText("Click a row to expand. Edit opens the pin editor; Clear removes the override.")
 
-    listScroll = CreateFrame("ScrollFrame", "VendorMapOverridesListScroll", content, "UIPanelScrollFrameTemplate")
+    local listScroll = CreateFrame("ScrollFrame", nil, content, "UIPanelScrollFrameTemplate")
     listScroll:SetPoint("TOPLEFT", 16, -198)
     listScroll:SetSize(580, 320)
 
-    listContent = CreateFrame("Frame", "VendorMapOverridesListContent", listScroll)
-    listContent:SetWidth(560)
-    listContent:SetHeight(320)
-    listScroll:SetScrollChild(listContent)
+    state.listContent = CreateFrame("Frame", nil, listScroll)
+    state.listContent:SetWidth(560)
+    state.listContent:SetHeight(320)
+    listScroll:SetScrollChild(state.listContent)
 
     listScroll:EnableMouseWheel(true)
     listScroll:SetScript("OnMouseWheel", function(self, delta)
@@ -317,10 +358,9 @@ function ns.BuildDataSettingsPage(frame)
         self:SetVerticalScroll(math.min(maxScroll, math.max(0, cur - delta * step)))
     end)
 
-    ns.RefreshOverrideList()
+    RefreshOverrideListForState(state)
     UI.FinishContentHeight(content, -540)
 
-    -- Refresh list whenever this page is shown
     frame:HookScript("OnShow", function()
         ns.RefreshOverrideList()
     end)

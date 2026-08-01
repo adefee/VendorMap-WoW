@@ -15,7 +15,7 @@ local function LuaEscape(s)
     if not s then
         return ""
     end
-    return tostring(s):gsub("\\", "\\\\"):gsub('"', '\\"')
+    return tostring(s):gsub("\\", "\\\\"):gsub('"', '\\"'):gsub("\r", "\\r"):gsub("\n", "\\n")
 end
 
 local function FormatTypes(types)

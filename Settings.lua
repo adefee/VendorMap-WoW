@@ -2,7 +2,7 @@ local ADDON_NAME, ns = ...
 
 -- Settings hub: Blizzard AddOns expandable categories + standalone tabbed window.
 
-local pages = {} -- { key, title, frame, build }
+local pages = {} -- { key, title, standaloneFrame, settingsFrame }
 local standalone
 local activeStandaloneKey
 local built = false
@@ -21,13 +21,21 @@ local function EnsurePages()
     ns.SettingsUI.ResetWidgets()
 
     for _, def in ipairs(PAGE_DEFS) do
-        local frame = ns.SettingsUI.CreateCanvas("VendorMapOptions_" .. def.key)
-        frame.pageTitle = def.title
-        def.build(frame)
+        -- Distinct frames: standalone keeps parenting under our window; Blizzard
+        -- Settings may reparent the registered canvas.
+        local standaloneFrame = ns.SettingsUI.CreateCanvas("VendorMapOptions_" .. def.key)
+        standaloneFrame.pageTitle = def.title
+        def.build(standaloneFrame)
+
+        local settingsFrame = ns.SettingsUI.CreateCanvas("VendorMapOptions_" .. def.key .. "_Settings")
+        settingsFrame.pageTitle = def.title
+        def.build(settingsFrame)
+
         pages[#pages + 1] = {
             key = def.key,
             title = def.title,
-            frame = frame,
+            standaloneFrame = standaloneFrame,
+            settingsFrame = settingsFrame,
         }
     end
 end
@@ -48,13 +56,14 @@ local function ShowStandalonePage(key)
     end
     activeStandaloneKey = page.key
     for _, p in ipairs(pages) do
-        p.frame:SetParent(standalone.body)
-        p.frame:ClearAllPoints()
-        p.frame:SetAllPoints(standalone.body)
+        local frame = p.standaloneFrame
+        frame:SetParent(standalone.body)
+        frame:ClearAllPoints()
+        frame:SetAllPoints(standalone.body)
         if p.key == page.key then
-            p.frame:Show()
+            frame:Show()
         else
-            p.frame:Hide()
+            frame:Hide()
         end
     end
     if standalone.title then
@@ -204,7 +213,7 @@ function ns.InitSettings()
     ns.SettingsCategory = category
 
     for _, p in ipairs(pages) do
-        local sub = Settings.RegisterCanvasLayoutSubcategory(category, p.frame, p.title)
+        local sub = Settings.RegisterCanvasLayoutSubcategory(category, p.settingsFrame, p.title)
         p.settingsCategory = sub
     end
     ns.SettingsPages = pages

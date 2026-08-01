@@ -77,7 +77,10 @@ local function StoreName(npcID, name)
     end
     memory[npcID] = name
     PersistCache()
-    VendorMapDB.npcNames[npcID] = name
+    if type(VendorMapDB) == "table" then
+        VendorMapDB.npcNames = VendorMapDB.npcNames or {}
+        VendorMapDB.npcNames[npcID] = name
+    end
     pending[npcID] = nil
     retries[npcID] = nil
 end

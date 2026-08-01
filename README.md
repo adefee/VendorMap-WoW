@@ -1,18 +1,22 @@
 # VendorMap
 
-VendorMap shows vendor, repair, barber, and other utility NPC locations directly on the world map and minimap, with per-type filters. It is fully standalone: **no HandyNotes or other addons are required**. VendorMap also *learns* from your discoveries: when you interact with a vendor, its category and details are updated to be current (and you can optionally override icons, notes, or other details as desired). Your Learned data can be easily exported to share with others or to submit here to make the addon data better for everyone.
+VendorMap shows vendor, repair, barber, trainer, banker, and other utility NPC locations directly on the world map and minimap, with per-type filters. It is fully standalone: **no HandyNotes or other addons are required**. VendorMap also *learns* from your discoveries: when you interact with a vendor (or target a training dummy), its category and details are updated to be current (and you can optionally override icons, notes, or other details as desired). Your Learned data can be easily exported to share with others or to submit here to make the addon data better for everyone.
 
 ## Features
 
-- World-map and minimap pins for a wide range of NPC types: repair, reagents, food & drink, poisons, ammunition, mounts, stable masters, transmog, decor/housing, professions, faction/reputation, innkeepers, barbers, and general goods.
-- Customize vendor icons by category, or add vendor-specific overrides for icons, notes, categories, and more.
-- Filter button on the world map to toggle types and factions.
-- **Learning**: vendors are recorded automatically on `MERCHANT_SHOW` / `GOSSIP_SHOW`
-(safe under Midnight secret-value rules).
-- **Overrides**: right-click any pin to edit or hide it.
-- Waypoint routing via WaypointUI, TomTom, or the built-in Blizzard waypoint.
-- Settings under three tabs in your Settings > Addons list: Basic, Vendors & Icons, and Data Management.
-- Data is split into `packs` based on contintent for your memory optimization pleasaure.
+- **World map & minimap pins** for a wide range of NPC types, each with its own filter and icon:
+  repair, reagents, food & drink, poisons, ammunition, mounts, pets, stable masters, transmog, decor/housing, professions (including craft specialties and trainers), class supplies, faction/reputation, innkeepers, barbers, bankers, training dummies, auction house, and general goods.
+- **Smart categorization** from inventory and NPC titles — e.g. Mount Trainer → Mounts, Pet Vendor / Breeder / Kennel → Pets, profession/class supply subtitles → the matching specialty icon.
+- **Profession & class specialties**: nested filters and icons for craft supplies (Alchemy, Blacksmithing, Cooking, …) and class supply vendors (Druid Supplies, Mage Supplies, …). Profession trainers keep the skillbook icon.
+- **Learning**: merchants, gossip NPCs, profession trainers, stables, barbers, bankers, auctioneers, transmogrifiers, and training dummies are recorded as you meet them (safe under Midnight secret-value rules). Training dummies are off by default — enable them under Vendors & Icons.
+- **Filters**: world-map and optional minimap filter buttons to toggle types and factions; per-type visibility, icon, and size under Vendors & Icons.
+- **Overrides**: right-click any pin to edit types, subtitle, specialty, note, faction, icon, or hide it.
+- **Overlapping pins**: hover shows nearby vendors in the tooltip; left-click lets you pick which one to route to.
+- **Waypoints** via WaypointUI, TomTom, or the built-in Blizzard waypoint (auto or pinned preference).
+- **Reputation-aware seeds**: faction/rep vendors can store required standing so tooltips stay informative.
+- **Approximate pins** (optional): vicinity markers without a creature ID (e.g. Auction House / Bank hubs); off by default until you learn the real NPC.
+- **Settings**: Basic, Vendors & Icons, and Data Management — via Esc → Options → AddOns → VendorMap, the addon compartment, or `/vendormap`.
+- **Continent data packs** load on demand so memory stays low while you explore.
 
 
 
@@ -47,7 +51,7 @@ addon and all continent data packs.
 
 - [TomTom](https://www.curseforge.com/wow/addons/tomtom) for arrow routing
 (VendorMap falls back to the Blizzard waypoint if not presnet).
-- [TomTom](https://www.curseforge.com/wow/addons/waypointui) for arrow routing
+- [WaypointUI](https://www.curseforge.com/wow/addons/waypointui) for arrow routing
 (VendorMap falls back to the Blizzard waypoint if not present).
 
 

@@ -171,6 +171,53 @@ local function VendorListSecondary(info)
     return VendorTypesText(info)
 end
 
+--- Normalize tooltip labels for equality (trim, strip colors/ATT prefix, lowercase).
+local function NormalizeTooltipLabel(text)
+    if type(text) ~= "string" or text == "" then
+        return nil
+    end
+    -- Prefer specialty-note normalization when available (strips "ATT — …").
+    if ns.NoteTextForSpecialtyMatch then
+        local specialty = ns.NoteTextForSpecialtyMatch(text)
+        if specialty and specialty ~= "" then
+            return specialty
+        end
+    end
+    text = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("|T.-|t", "")
+    text = text:match("^%s*(.-)%s*$") or text
+    if text == "" then
+        return nil
+    end
+    return text:lower()
+end
+
+--- True when `text` matches any of the given labels after normalization.
+local function LabelMatchesAny(text, ...)
+    local needle = NormalizeTooltipLabel(text)
+    if not needle then
+        return false
+    end
+    for i = 1, select("#", ...) do
+        local other = NormalizeTooltipLabel(select(i, ...))
+        if other and other == needle then
+            return true
+        end
+    end
+    return false
+end
+
+--- Subtitle line text: stored NPC subtitle, else derived role ("Enchanting Trainer").
+local function VendorDisplaySubtitle(info)
+    local subtitle = info and info.subtitle
+    if type(subtitle) == "string" and subtitle ~= "" then
+        return subtitle
+    end
+    if ns.GetVendorRoleLabel then
+        return ns.GetVendorRoleLabel(info)
+    end
+    return nil
+end
+
 local function RenderVendorPrimary(tooltip, info, opts)
     if not tooltip or not info then
         return
@@ -178,15 +225,16 @@ local function RenderVendorPrimary(tooltip, info, opts)
     opts = opts or {}
     local name = ns.Names and ns.Names:DisplayName(info) or info.name
     tooltip:SetText(name, 1, 1, 1)
-    local role = ns.GetVendorRoleLabel and ns.GetVendorRoleLabel(info)
-    local subtitle = info.subtitle
-    if type(subtitle) == "string" and subtitle ~= "" then
-        tooltip:AddLine(subtitle, 0.75, 0.75, 0.75, true)
-    elseif role then
-        tooltip:AddLine(role, 0.75, 0.75, 0.75, true)
+    -- Final derived role from specialtyKey/subtitle/note (e.g. "Enchanting Trainer").
+    local derived = ns.GetVendorRoleLabel and ns.GetVendorRoleLabel(info) or nil
+    local shownSubtitle = VendorDisplaySubtitle(info)
+    if shownSubtitle then
+        tooltip:AddLine(shownSubtitle, 0.75, 0.75, 0.75, true)
     end
     local typesText = VendorTypesText(info)
-    if typesText ~= "" then
+    -- Types often re-embeds the role in place of "Profession"; skip if that line
+    -- would repeat the subtitle we just drew.
+    if typesText ~= "" and not LabelMatchesAny(typesText, shownSubtitle) then
         tooltip:AddLine(typesText, 0.8, 0.8, 0.8, true)
     end
     tooltip:AddLine(info.faction or "Neutral", 0.6, 0.8, 1)
@@ -194,8 +242,10 @@ local function RenderVendorPrimary(tooltip, info, opts)
     if repText then
         tooltip:AddLine(repText, 0.4, 0.9, 0.5, true)
     end
-    if info.note then
-        tooltip:AddLine(info.note, 1, 0.82, 0, true)
+    -- Hide note when it duplicates the shown subtitle or derived role label.
+    local note = info.note
+    if type(note) == "string" and note ~= "" and not LabelMatchesAny(note, shownSubtitle, derived) then
+        tooltip:AddLine(note, 1, 0.82, 0, true)
     end
     if opts.showSource then
         local provenance = ns.FormatVendorProvenance and ns.FormatVendorProvenance(info)
@@ -362,20 +412,23 @@ local function ShowPickerRowTooltip(row)
 
     local name = ns.Names and ns.Names:DisplayName(info) or info.name or "Unknown Vendor"
     add(name, 1, 1, 1, "GameFontNormal")
-    local role = ns.GetVendorRoleLabel and ns.GetVendorRoleLabel(info)
-    if info.subtitle and info.subtitle ~= "" then
-        add(info.subtitle, 0.75, 0.75, 0.75)
-    elseif role then
-        add(role, 0.75, 0.75, 0.75)
+    local derived = ns.GetVendorRoleLabel and ns.GetVendorRoleLabel(info) or nil
+    local shownSubtitle = VendorDisplaySubtitle(info)
+    if shownSubtitle then
+        add(shownSubtitle, 0.75, 0.75, 0.75)
     end
-    add(VendorTypesText(info), 0.8, 0.8, 0.8)
+    local typesText = VendorTypesText(info)
+    if typesText ~= "" and not LabelMatchesAny(typesText, shownSubtitle) then
+        add(typesText, 0.8, 0.8, 0.8)
+    end
     add(info.faction or "Neutral", 0.6, 0.8, 1)
     local repText = ns.Names and ns.Names:RepRequirementText(info)
     if repText then
         add(repText, 0.4, 0.9, 0.5)
     end
-    if info.note and info.note ~= "" then
-        add(info.note, 1, 0.82, 0)
+    local note = info.note
+    if type(note) == "string" and note ~= "" and not LabelMatchesAny(note, shownSubtitle, derived) then
+        add(note, 1, 0.82, 0)
     end
     add(
         (ns.FormatVendorProvenance and ns.FormatVendorProvenance(info))
@@ -536,12 +589,16 @@ local function EnsurePicker()
     end)
     picker:SetScript("OnKeyDown", function(self, key)
         if key == "ESCAPE" then
+            if self.SetPropagateKeyboardInput then
+                self:SetPropagateKeyboardInput(false)
+            end
             ClosePicker()
+            return
+        end
+        if self.SetPropagateKeyboardInput then
+            self:SetPropagateKeyboardInput(true)
         end
     end)
-    if picker.SetPropagateKeyboardInput then
-        picker:SetPropagateKeyboardInput(false)
-    end
 
     -- Click-away catcher: lives behind picker rows but above everything else.
     -- Always anchored full-screen; visibility + EnableMouse toggles activation.

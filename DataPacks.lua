@@ -89,8 +89,8 @@ local function IsAddOnLoaded(name)
     if C_AddOns and C_AddOns.IsAddOnLoaded then
         return C_AddOns.IsAddOnLoaded(name)
     end
-    if IsAddOnLoaded then
-        return IsAddOnLoaded(name)
+    if _G.IsAddOnLoaded then
+        return _G.IsAddOnLoaded(name)
     end
     return false
 end

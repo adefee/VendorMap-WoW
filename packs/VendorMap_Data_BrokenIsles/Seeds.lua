@@ -14,7 +14,7 @@ A{ name="Patricia Egan", npcID=92457, mapID=627, x=0.4188, y=0.3210, faction="Ho
 A{ name="Mei Francis", npcID=92489, mapID=627, x=0.5768, y=0.4177, faction="Horde", types={food=true, mounts=true} }
 A{ name="Aimee", npcID=92936, mapID=627, x=0.5067, y=0.2925, faction="Horde", types={food=true} }
 A{ name="Didi the Wrench", npcID=93520, mapID=627, x=0.3864, y=0.2474, faction="Horde", types={profession=true} }
-A{ name="Ranid Glowergold", npcID=93521, mapID=627, x=0.3460, y=0.2860, faction="Horde", types={general=true}, note="ATT — The vendor will only sell this recipe to those who have already completed the quest that rewards it. This is in case you" }
+A{ name="Ranid Glowergold", npcID=93521, mapID=627, x=0.3460, y=0.2860, faction="Horde", types={general=true} }
 A{ name="Lalla Brightweave", npcID=93524, mapID=627, x=0.3610, y=0.3330, faction="Horde", types={general=true} }
 A{ name="Tiffany Cartier", npcID=93526, mapID=627, x=0.3986, y=0.3477, faction="Horde", types={general=true} }
 A{ name="Angelique Butler", npcID=93528, mapID=627, x=0.3660, y=0.3760, faction="Horde", types={transmog=true} }
@@ -122,7 +122,7 @@ A{ name="Leyweaver Inondra", npcID=93971, mapID=680, x=0.4020, y=0.6960, faction
 A{ name="Leyweaver Jorjana", npcID=93979, mapID=680, x=0.4940, y=0.7580, faction="Neutral", types={general=true} }
 A{ name="Stalriss Dawnrunner", npcID=98969, mapID=680, x=0.2660, y=0.7160, faction="Neutral", types={general=true} }
 A{ name="Jacin", npcID=107467, mapID=680, x=0.4900, y=0.8160, faction="Neutral", types={food=true} }
-A{ name="Sundries Merchant", npcID=109562, mapID=680, x=0.5000, y=0.7730, faction="Neutral", types={general=true}, note="ATT — You must complete the Suramar quest chain starting with |cffffff00Magic Message|r up to completing |cffffff00Masquerade|" }
+A{ name="Sundries Merchant", npcID=109562, mapID=680, x=0.5000, y=0.7730, faction="Neutral", types={general=true} }
 A{ name="Sasunne Dameuse", npcID=112059, mapID=680, x=0.5120, y=0.5000, faction="Neutral", types={general=true} }
 A{ name="Dolse Shimmersong", npcID=112064, mapID=680, x=0.5120, y=0.4980, faction="Neutral", types={general=true} }
 A{ name="Markus Hjolbruk", npcID=112226, mapID=680, x=0.7160, y=0.4880, faction="Neutral", types={general=true} }
@@ -140,7 +140,7 @@ A{ name="Mei Chele", npcID=99154, mapID=709, x=0.5490, y=0.6240, faction="Neutra
 A{ name="Caydori Brightstar", npcID=112338, mapID=709, x=0.5030, y=0.5900, faction="Neutral", types={transmog=true, faction=true}, repFactionID=1859, minStanding=9000 }
 A{ name="Calydus", npcID=101097, mapID=717, x=0.3770, y=0.3100, faction="Neutral", types={general=true} }
 A{ name="Gigi Gigavoid", npcID=112434, mapID=717, x=0.5870, y=0.3270, faction="Neutral", types={transmog=true, faction=true}, repFactionID=1859, minStanding=42000 }
-A{ name="Falara Nightsong", npcID=112407, mapID=720, x=0.5780, y=0.4350, faction="Alliance", types={transmog=true, faction=true}, repFactionID=1859, minStanding=9000, note="ATT — |c808080FAIn order to purchase the toy|r |c00FF96AFTiny Set of Warglaives|r|c808080FA, you must have completed the class" }
+A{ name="Falara Nightsong", npcID=112407, mapID=720, x=0.5780, y=0.4350, faction="Alliance", types={transmog=true, faction=true}, repFactionID=1859, minStanding=9000 }
 A{ name="Demissya Gladestrider", npcID=116621, mapID=720, x=0.5930, y=0.4240, faction="Alliance", types={transmog=true} }
 A{ name="Jackson Watkins", npcID=112440, mapID=735, x=0.4560, y=0.5760, faction="Neutral", types={transmog=true, faction=true}, repFactionID=1859, minStanding=9000 }
 A{ name="Pan the Kind Hand", npcID=100661, mapID=739, x=0.5880, y=0.3180, faction="Neutral", types={general=true} }
